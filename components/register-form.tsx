@@ -3,19 +3,53 @@
 import Link from "next/link";
 import type React from "react";
 import { useState } from "react";
+import { type RegisterInput, registerSchema } from "@/app/register/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth/client";
 
 export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRepeat, setPasswordRepeat] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle register logic here
-    console.log("Register attempt:", { email, password });
+
+    const passwordMatch = password === passwordRepeat;
+    if (!passwordMatch) {
+      alert("Passwords do not match");
+    }
+
+    const data: RegisterInput = {
+      email,
+      password,
+      passwordRepeat,
+    };
+
+    const result = registerSchema.safeParse(data);
+    if (!result.success) {
+      alert("Invalid input");
+      return;
+    }
+
+    await authClient.signUp.email(
+      {
+        email: data.email,
+        password: data.password,
+        name: "ren",
+      },
+      {
+        onSuccess: () => {
+          console.log("Signed up successfully");
+        },
+        onError: (error) => {
+          console.error("Error signing up:", error);
+          alert("Error signing up");
+        },
+      },
+    );
   };
 
   return (

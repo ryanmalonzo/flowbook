@@ -1,18 +1,22 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "../db";
 import { nanoid } from "nanoid";
+import { db } from "../db";
+import * as schema from "../db/schema";
 
 export const auth = betterAuth({
-    database: drizzleAdapter(db, {
-        provider: "pg",
-    }),
-    advanced: {
-        database: {
-            generateId: () => nanoid(),
-        }
+  database: drizzleAdapter(db, {
+    provider: "pg",
+    schema: {
+      ...schema,
     },
-    emailAndPassword: {
-        enabled: true,
-    }
+  }),
+  advanced: {
+    database: {
+      generateId: () => nanoid(),
+    },
+  },
+  emailAndPassword: {
+    enabled: true,
+  },
 });
