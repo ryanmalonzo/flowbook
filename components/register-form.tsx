@@ -8,14 +8,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export function LoginForm() {
+export function RegisterForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [passwordRepeat, setPasswordRepeat] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log("Login attempt:", { email, password })
+    // Handle register logic here
+    console.log("Register attempt:", { email, password })
   }
 
   return (
@@ -53,14 +54,28 @@ export function LoginForm() {
           />
         </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="passwordRepeat" className="text-sm font-medium text-foreground">
+            Repeat Password
+          </Label>
+          <Input
+            id="passwordRepeat"
+            type="password"
+            placeholder="Repeat your password"
+            value={passwordRepeat}
+            onChange={(e) => setPasswordRepeat(e.target.value)}
+            required
+          />
+        </div>
+
         <Button type="submit" className="w-full">
-          Sign in
+          Sign up
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          Need an account?{" "}
-          <Link href="/register" className="font-medium text-foreground hover:underline">
-            Sign up
+          Already have an account?{" "}
+          <Link href="/login" className="font-medium text-foreground hover:underline">
+            Sign in
           </Link>
         </p>
       </form>
