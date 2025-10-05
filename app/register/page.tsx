@@ -37,7 +37,7 @@ export default function RegisterPage() {
       {
         email: data.email,
         password: data.password,
-        name: "ren",
+        name: data.email,
       },
       {
         onSuccess: () => {
