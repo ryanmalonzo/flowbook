@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+    "includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!sql"]
   },
   "formatter": {
     "enabled": true,
@@ -17,14 +17,39 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "nursery": {
+        "noImportCycles": "error",
+        "noShadow": "warn",
+        "useAnchorHref": "error",
+        "useImageSize": "warn"
+      },
       "recommended": true,
+      "style": {
+        "noImplicitBoolean": "warn",
+        "noMagicNumbers": "error",
+        "noParameterAssign": "error",
+        "noUselessElse": "error",
+        "noYodaExpression": "error",
+        "useAsConstAssertion": "info",
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "error",
+        "useCollapsedIf": "error",
+        "useConsistentCurlyBraces": "warn",
+        "useDefaultParameterLast": "error",
+        "useDefaultSwitchClause": "error",
+        "useExplicitLengthCheck": "error",
+        "useSelfClosingElements": "error",
+        "useThrowOnlyError": "error"
+      },
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noUnassignedVariables": "error",
+        "useAwait": "error"
       }
     },
     "domains": {
-      "next": "recommended",
-      "react": "recommended"
+      "next": "all",
+      "react": "all"
     }
   },
   "assist": {
