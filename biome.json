@@ -17,14 +17,39 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "nursery": {
+        "noImportCycles": "error",
+        "noShadow": "warning",
+        "useAnchorHref": "error",
+        "useImageSize": "warning"
+      },
       "recommended": true,
+      "style": {
+        "noImplicitBoolean": "warning",
+        "noMagicNumbers": "error",
+        "noParameterAssign": "error",
+        "noUselessElse": "error",
+        "noYodaExpression": "error",
+        "useAsConstAssertion": "information",
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "error",
+        "useCollapsedIf": "error",
+        "useConsistentCurlyBraces": "warning",
+        "useDefaultParameterLast": "error",
+        "useDefaultSwitchClause": "error",
+        "useExplicitLengthCheck": "error",
+        "useSelfClosingElements": "error",
+        "useThrowOnlyError": "error"
+      },
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noUnassignedVariables": "error",
+        "useAwait": "error"
       }
     },
     "domains": {
-      "next": "recommended",
-      "react": "recommended"
+      "next": "all",
+      "react": "all"
     }
   },
   "assist": {
