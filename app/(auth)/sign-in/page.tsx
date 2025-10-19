@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { useAuthError } from "@/lib/use-auth-error";
 import { SignInForm } from "./form";
 import { createSignInSchema, type SignInFormData } from "./types";
 
@@ -12,6 +14,7 @@ export default function SignInPage() {
   const router = useRouter();
 
   const translate = useTranslations("validation");
+  const { getAuthErrorMessage } = useAuthError();
   const signInSchema = createSignInSchema(translate);
 
   const {
@@ -39,7 +42,7 @@ export default function SignInPage() {
     );
 
     if (error) {
-      // TODO: Handle error
+      toast.error(getAuthErrorMessage(error.code));
     }
   };
 

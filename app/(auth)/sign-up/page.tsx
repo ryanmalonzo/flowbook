@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
+import { useAuthError } from "@/lib/use-auth-error";
 import { SignUpForm } from "./form";
 import { createSignUpSchema, type SignUpFormData } from "./types";
 
@@ -12,6 +14,7 @@ export default function SignUpPage() {
   const router = useRouter();
 
   const translate = useTranslations("validation");
+  const { getAuthErrorMessage } = useAuthError();
   const signUpSchema = createSignUpSchema(translate);
 
   const {
@@ -40,7 +43,7 @@ export default function SignUpPage() {
     );
 
     if (error) {
-      // TODO: Handle error
+      toast.error(getAuthErrorMessage(error.code));
     }
   };
 
