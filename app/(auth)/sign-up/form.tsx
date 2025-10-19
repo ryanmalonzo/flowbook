@@ -2,28 +2,31 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import type React from "react";
-import { useId, useState } from "react";
+import { useId } from "react";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { SignUpFormData } from "./types";
 
-export function SignUpForm() {
+interface SignUpFormProps {
+  onSubmit: (e: React.FormEvent) => void;
+  register: UseFormRegister<SignUpFormData>;
+  errors: FieldErrors<SignUpFormData>;
+  isSubmitting: boolean;
+}
+
+export function SignUpForm({
+  onSubmit,
+  register,
+  errors,
+  isSubmitting,
+}: SignUpFormProps) {
   const t = useTranslations();
 
   const emailId = useId();
   const passwordId = useId();
   const passwordConfirmId = useId();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle sign up logic here
-    console.log("Sign up attempt:", { email, password });
-  };
 
   return (
     <div className="w-full max-w-sm">
@@ -31,7 +34,7 @@ export function SignUpForm() {
         {t("common.appName")}
       </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label
             htmlFor={emailId}
@@ -43,12 +46,13 @@ export function SignUpForm() {
             id={emailId}
             type="email"
             placeholder={t("signUp.form.email.placeholder")}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required={true}
+            {...register("email")}
             className="w-full"
             autoComplete="email"
           />
+          {errors.email && (
+            <p className="text-sm text-destructive">{errors.email.message}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -62,12 +66,15 @@ export function SignUpForm() {
             id={passwordId}
             type="password"
             placeholder={t("signUp.form.password.placeholder")}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required={true}
+            {...register("password")}
             className="w-full"
             autoComplete="new-password"
           />
+          {errors.password && (
+            <p className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -81,15 +88,18 @@ export function SignUpForm() {
             id={passwordConfirmId}
             type="password"
             placeholder={t("signUp.form.passwordConfirm.placeholder")}
-            value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            required={true}
+            {...register("passwordConfirm")}
             className="w-full"
             autoComplete="new-password"
           />
+          {errors.passwordConfirm && (
+            <p className="text-sm text-destructive">
+              {errors.passwordConfirm.message}
+            </p>
+          )}
         </div>
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
           {t("signUp.form.submit")}
         </Button>
 
