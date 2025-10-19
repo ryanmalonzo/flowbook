@@ -1,5 +1,20 @@
 {
   "common": {
     "appName": "Flowbook"
+  },
+  "signIn": {
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password"
+      },
+      "submit": "Sign in"
+    },
+    "noAccount": "Don't have an account? ",
+    "signUp": "Sign up"
   }
 }
