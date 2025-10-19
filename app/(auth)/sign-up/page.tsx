@@ -1,9 +1,9 @@
-import { SignInForm } from "./form";
+import { SignUpForm } from "./form";
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
-      <SignInForm />
+      <SignUpForm />
     </main>
   );
 }

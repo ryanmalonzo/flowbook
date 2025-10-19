@@ -16,5 +16,24 @@
     },
     "noAccount": "Don't have an account? ",
     "signUp": "Sign up"
+  },
+  "signUp": {
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password"
+      },
+      "passwordConfirm": {
+        "label": "Confirm password",
+        "placeholder": "Re-enter your password"
+      },
+      "submit": "Sign up"
+    },
+    "existingAccount": "Already have an account? ",
+    "signIn": "Sign in"
   }
 }
