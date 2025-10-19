@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type React from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function SignUpForm() {
   const t = useTranslations();
+
+  const emailId = useId();
+  const passwordId = useId();
+  const passwordConfirmId = useId();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,12 +34,13 @@ export function SignUpForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label
-            htmlFor="email"
+            htmlFor={emailId}
             className="text-sm font-medium text-foreground"
           >
             {t("signUp.form.email.label")}
           </Label>
           <Input
+            id={emailId}
             type="email"
             placeholder={t("signUp.form.email.placeholder")}
             value={email}
@@ -48,12 +53,13 @@ export function SignUpForm() {
 
         <div className="space-y-2">
           <Label
-            htmlFor="password"
+            htmlFor={passwordId}
             className="text-sm font-medium text-foreground"
           >
             {t("signUp.form.password.label")}
           </Label>
           <Input
+            id={passwordId}
             type="password"
             placeholder={t("signUp.form.password.placeholder")}
             value={password}
@@ -66,12 +72,13 @@ export function SignUpForm() {
 
         <div className="space-y-2">
           <Label
-            htmlFor="passwordConfirm"
+            htmlFor={passwordConfirmId}
             className="text-sm font-medium text-foreground"
           >
             {t("signUp.form.passwordConfirm.label")}
           </Label>
           <Input
+            id={passwordConfirmId}
             type="password"
             placeholder={t("signUp.form.passwordConfirm.placeholder")}
             value={passwordConfirm}

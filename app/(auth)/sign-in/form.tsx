@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type React from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function SignInForm() {
   const t = useTranslations();
+
+  const emailId = useId();
+  const passwordId = useId();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,12 +32,13 @@ export function SignInForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
           <Label
-            htmlFor="email"
+            htmlFor={emailId}
             className="text-sm font-medium text-foreground"
           >
             {t("signIn.form.email.label")}
           </Label>
           <Input
+            id={emailId}
             type="email"
             placeholder={t("signIn.form.email.placeholder")}
             value={email}
@@ -47,12 +51,13 @@ export function SignInForm() {
 
         <div className="space-y-2">
           <Label
-            htmlFor="password"
+            htmlFor={passwordId}
             className="text-sm font-medium text-foreground"
           >
             {t("signIn.form.password.label")}
           </Label>
           <Input
+            id={passwordId}
             type="password"
             placeholder={t("signIn.form.password.placeholder")}
             value={password}
