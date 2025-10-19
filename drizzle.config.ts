@@ -6,6 +6,7 @@ export default defineConfig({
   schema: "./db/schema",
   dialect: "postgresql",
   dbCredentials: {
+    // biome-ignore lint: use non-null assertion
     url: process.env.DATABASE_URL!,
   },
 });
