@@ -17,6 +17,7 @@ export default function SignInPage() {
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     mode: "onSubmit",
+    reValidateMode: "onBlur",
   });
 
   const onSubmit = async (data: SignInFormData) => {

@@ -17,6 +17,7 @@ export default function SignUpPage() {
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     mode: "onSubmit",
+    reValidateMode: "onBlur",
   });
 
   const onSubmit = async (data: SignUpFormData) => {
