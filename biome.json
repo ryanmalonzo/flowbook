@@ -29,7 +29,8 @@
         "noImportCycles": "error",
         "noShadow": "warn",
         "useAnchorHref": "error",
-        "useImageSize": "warn"
+        "useImageSize": "warn",
+        "useSortedClasses": "error"
       },
       "recommended": true,
       "style": {

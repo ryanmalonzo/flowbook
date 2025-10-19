@@ -29,7 +29,7 @@ export function SignInForm({
 
   return (
     <div className="w-full max-w-sm">
-      <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
+      <h1 className="mb-8 text-center font-bold text-4xl text-foreground">
         {t("common.appName")}
       </h1>
 
@@ -37,7 +37,7 @@ export function SignInForm({
         <div className="space-y-2">
           <Label
             htmlFor={emailId}
-            className="text-sm font-medium text-foreground"
+            className="font-medium text-foreground text-sm"
           >
             {t("signIn.form.email.label")}
           </Label>
@@ -50,14 +50,14 @@ export function SignInForm({
             autoComplete="email"
           />
           {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
+            <p className="text-destructive text-sm">{errors.email.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
           <Label
             htmlFor={passwordId}
-            className="text-sm font-medium text-foreground"
+            className="font-medium text-foreground text-sm"
           >
             {t("signIn.form.password.label")}
           </Label>
@@ -70,7 +70,7 @@ export function SignInForm({
             autoComplete="current-password"
           />
           {errors.password && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {errors.password.message}
             </p>
           )}
@@ -80,7 +80,7 @@ export function SignInForm({
           {t("signIn.form.submit")}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-muted-foreground text-sm">
           {t("signIn.noAccount")}
           <Link
             href="/sign-up"

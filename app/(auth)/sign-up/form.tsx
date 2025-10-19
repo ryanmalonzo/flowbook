@@ -30,7 +30,7 @@ export function SignUpForm({
 
   return (
     <div className="w-full max-w-sm">
-      <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
+      <h1 className="mb-8 text-center font-bold text-4xl text-foreground">
         {t("common.appName")}
       </h1>
 
@@ -38,7 +38,7 @@ export function SignUpForm({
         <div className="space-y-2">
           <Label
             htmlFor={emailId}
-            className="text-sm font-medium text-foreground"
+            className="font-medium text-foreground text-sm"
           >
             {t("signUp.form.email.label")}
           </Label>
@@ -51,14 +51,14 @@ export function SignUpForm({
             autoComplete="email"
           />
           {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
+            <p className="text-destructive text-sm">{errors.email.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
           <Label
             htmlFor={passwordId}
-            className="text-sm font-medium text-foreground"
+            className="font-medium text-foreground text-sm"
           >
             {t("signUp.form.password.label")}
           </Label>
@@ -71,7 +71,7 @@ export function SignUpForm({
             autoComplete="new-password"
           />
           {errors.password && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {errors.password.message}
             </p>
           )}
@@ -80,7 +80,7 @@ export function SignUpForm({
         <div className="space-y-2">
           <Label
             htmlFor={passwordConfirmId}
-            className="text-sm font-medium text-foreground"
+            className="font-medium text-foreground text-sm"
           >
             {t("signUp.form.passwordConfirm.label")}
           </Label>
@@ -93,7 +93,7 @@ export function SignUpForm({
             autoComplete="new-password"
           />
           {errors.passwordConfirm && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {errors.passwordConfirm.message}
             </p>
           )}
@@ -103,7 +103,7 @@ export function SignUpForm({
           {t("signUp.form.submit")}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-muted-foreground text-sm">
           {t("signUp.existingAccount")}
           <Link
             href="/sign-in"
