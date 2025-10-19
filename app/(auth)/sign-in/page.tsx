@@ -1,11 +1,15 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { SignInForm } from "./form";
-import { signInSchema, type SignInFormData } from "./types";
+import { createSignInSchema, type SignInFormData } from "./types";
 
 export default function SignInPage() {
+  const translate = useTranslations("validation");
+  const signInSchema = createSignInSchema(translate);
+
   const {
     register,
     handleSubmit,

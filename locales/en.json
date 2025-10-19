@@ -2,6 +2,21 @@
   "common": {
     "appName": "Flowbook"
   },
+  "validation": {
+    "email": {
+      "required": "Email is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "password": {
+      "required": "Password is required",
+      "minLength": "Password must be at least {min} characters",
+      "requirements": "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+    },
+    "passwordConfirm": {
+      "required": "Please confirm your password",
+      "noMatch": "Passwords don't match"
+    }
+  },
   "signIn": {
     "form": {
       "email": {

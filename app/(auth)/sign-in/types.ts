@@ -1,10 +1,14 @@
 import { z } from "zod";
+import type { useTranslations } from "next-intl";
 
-export const signInSchema = z.object({
-  email: z
-    .email("Please enter a valid email address")
-    .min(1, "Email is required"),
-  password: z.string().min(1, "Password is required"),
-});
+export const createSignInSchema = (
+  translate: ReturnType<typeof useTranslations<"validation">>
+) =>
+  z.object({
+    email: z
+      .email(translate("email.invalid"))
+      .min(1, translate("email.required")),
+    password: z.string().min(1, translate("password.required")),
+  });
 
-export type SignInFormData = z.infer<typeof signInSchema>;
+export type SignInFormData = z.infer<ReturnType<typeof createSignInSchema>>;
