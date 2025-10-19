@@ -1,8 +1,8 @@
-import { z } from "zod";
 import type { useTranslations } from "next-intl";
+import { z } from "zod";
 
 export const createSignInSchema = (
-  translate: ReturnType<typeof useTranslations<"validation">>
+  translate: ReturnType<typeof useTranslations<"validation">>,
 ) =>
   z.object({
     email: z
