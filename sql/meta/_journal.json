@@ -8,6 +8,13 @@
       "when": 1760819190199,
       "tag": "0000_strong_nekra",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761474820120,
+      "tag": "0001_faithful_marauders",
+      "breakpoints": true
     }
   ]
 }
