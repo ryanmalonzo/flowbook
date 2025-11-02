@@ -122,7 +122,7 @@ export function SignUpForm({
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full" loading={isSubmitting}>
           {t("signUp.form.submit")}
         </Button>
 

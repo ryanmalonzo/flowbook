@@ -76,7 +76,7 @@ export function SignInForm({
           )}
         </div>
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full" loading={isSubmitting}>
           {t("signIn.form.submit")}
         </Button>
 
