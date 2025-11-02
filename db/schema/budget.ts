@@ -16,6 +16,7 @@ export const financialAccounts = pgTable("financial_accounts", {
   type: accountTypeEnum("type").notNull(),
   balance: decimal("balance", { precision: 10, scale: 2 }).default("0"),
   currency: text("currency").default("USD"),
+  deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

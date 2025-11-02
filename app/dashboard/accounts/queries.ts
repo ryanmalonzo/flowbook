@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { financialAccounts } from "@/db/schema/budget";
 
@@ -12,7 +12,12 @@ export async function getUserAccounts(userId: string) {
       currency: financialAccounts.currency,
     })
     .from(financialAccounts)
-    .where(eq(financialAccounts.userId, userId));
+    .where(
+      and(
+        eq(financialAccounts.userId, userId),
+        isNull(financialAccounts.deletedAt),
+      ),
+    );
 
   return accounts;
 }
