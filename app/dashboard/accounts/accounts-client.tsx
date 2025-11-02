@@ -15,6 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatCurrency } from "@/lib/utils";
 
 interface Account {
   id: string;
@@ -26,6 +27,7 @@ interface Account {
 
 interface AccountsClientProps {
   accounts: Account[];
+  defaultCurrency: string;
 }
 
 const accountTypeIcons = {
@@ -40,7 +42,10 @@ const accountTypeColors = {
   credit: "bg-destructive/10 text-destructive hover:bg-destructive/20",
 };
 
-export default function AccountsClient({ accounts }: AccountsClientProps) {
+export default function AccountsClient({
+  accounts,
+  defaultCurrency,
+}: AccountsClientProps) {
   const t = useTranslations();
 
   // Calculate assets (checking + savings)
@@ -64,13 +69,6 @@ export default function AccountsClient({ accounts }: AccountsClientProps) {
   // Calculate net worth (assets - debts)
   const netWorth = assets - debts;
 
-  const formatCurrency = (amount: number, currency: string = "USD") => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency,
-    }).format(amount);
-  };
-
   return (
     <div className="flex flex-col gap-6">
       {/* Financial Summary Cards */}
@@ -83,7 +81,7 @@ export default function AccountsClient({ accounts }: AccountsClientProps) {
               {t("accounts.assets")}
             </CardDescription>
             <CardTitle className="font-bold text-4xl">
-              {formatCurrency(assets)}
+              {formatCurrency(assets, defaultCurrency)}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -96,7 +94,7 @@ export default function AccountsClient({ accounts }: AccountsClientProps) {
               {t("accounts.debts")}
             </CardDescription>
             <CardTitle className="font-bold text-4xl">
-              {formatCurrency(debts)}
+              {formatCurrency(debts, defaultCurrency)}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -117,7 +115,7 @@ export default function AccountsClient({ accounts }: AccountsClientProps) {
               </Tooltip>
             </CardDescription>
             <CardTitle className="font-bold text-4xl">
-              {formatCurrency(netWorth)}
+              {formatCurrency(netWorth, defaultCurrency)}
             </CardTitle>
           </CardHeader>
         </Card>
