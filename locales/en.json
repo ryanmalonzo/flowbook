@@ -61,6 +61,13 @@
     "existingAccount": "Already have an account? ",
     "signIn": "Sign in"
   },
+  "dashboard": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "signOut": "Sign out",
+    "user": "User",
+    "noEmail": "No email"
+  },
   "betterAuth": {
     "error": {
       "USER_NOT_FOUND": "User not found",
