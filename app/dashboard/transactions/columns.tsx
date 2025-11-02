@@ -55,7 +55,7 @@ export function getColumns(
     {
       accessorKey: "date",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Date" />
+        <DataTableColumnHeader column={column} title="Date" sortField="date" />
       ),
       cell: ({ row }) => {
         const date = row.getValue("date") as Date;
@@ -67,7 +67,11 @@ export function getColumns(
     {
       accessorKey: "description",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Description" />
+        <DataTableColumnHeader
+          column={column}
+          title="Description"
+          sortField="description"
+        />
       ),
       cell: ({ row }) => {
         return (
@@ -80,7 +84,7 @@ export function getColumns(
               size="icon"
               className="h-6 w-6 opacity-0 group-hover:opacity-100"
               onClick={() => {
-                // TODO: Implement inline edit
+                // TODO: Implement inline edit functionality
                 console.log("Edit:", row.original.id);
               }}
             >
@@ -137,7 +141,7 @@ export function getColumns(
     {
       accessorKey: "type",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Type" />
+        <DataTableColumnHeader column={column} title="Type" sortField="type" />
       ),
       cell: ({ row }) => {
         const type = row.getValue("type") as "income" | "expense" | "transfer";
@@ -154,7 +158,11 @@ export function getColumns(
     {
       accessorKey: "amount",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Amount" />
+        <DataTableColumnHeader
+          column={column}
+          title="Amount"
+          sortField="amount"
+        />
       ),
       cell: ({ row }) => {
         const amount = Number.parseFloat(row.getValue("amount"));
@@ -196,7 +204,7 @@ export function getColumns(
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement edit
+                    // TODO: Implement edit transaction functionality
                     console.log("Edit transaction:", row.original.id);
                   }}
                 >
@@ -205,7 +213,7 @@ export function getColumns(
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement delete
+                    // TODO: Implement delete transaction functionality
                     console.log("Delete transaction:", row.original.id);
                   }}
                   className="text-destructive"

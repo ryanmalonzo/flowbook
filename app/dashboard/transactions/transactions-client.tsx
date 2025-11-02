@@ -1,6 +1,7 @@
 "use client";
 
 import { Download, Trash2, Wallet } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
@@ -21,13 +22,20 @@ import { DataTablePagination } from "@/components/ui/data-table/data-table-pagin
 import { DataTableToolbar } from "@/components/ui/data-table/data-table-toolbar";
 import { Separator } from "@/components/ui/separator";
 import { getColumns } from "./columns";
-import type { PaginationInfo, Transaction } from "./types";
+import type {
+  PaginationInfo,
+  Transaction,
+  TransactionFilters,
+  TransactionSort,
+} from "./types";
 
 interface TransactionsClientProps {
   transactions: Transaction[];
   pagination: PaginationInfo;
   accounts: Array<{ id: string; name: string }>;
   categories: Array<{ id: string; name: string }>;
+  initialFilters?: TransactionFilters;
+  initialSort?: TransactionSort;
 }
 
 interface AmountRange {
@@ -40,22 +48,41 @@ export default function TransactionsClient({
   pagination,
   accounts,
   categories,
+  initialFilters,
 }: TransactionsClientProps) {
   const t = useTranslations("transactions");
-  const [searchValue, setSearchValue] = React.useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [searchValue, setSearchValue] = React.useState(
+    initialFilters?.search || "",
+  );
   const [selectedAccounts, setSelectedAccounts] = React.useState<Set<string>>(
-    new Set(),
+    new Set(initialFilters?.accountIds || []),
   );
   const [selectedCategories, setSelectedCategories] = React.useState<
     Set<string>
-  >(new Set());
+  >(new Set(initialFilters?.categoryIds || []));
   const [selectedTypes, setSelectedTypes] = React.useState<Set<string>>(
-    new Set(),
+    new Set(initialFilters?.types || []),
   );
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
-  const [amountRange, setAmountRange] = React.useState<
-    AmountRange | undefined
-  >();
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
+    initialFilters?.dateFrom || initialFilters?.dateTo
+      ? {
+          from: initialFilters.dateFrom,
+          to: initialFilters.dateTo,
+        }
+      : undefined,
+  );
+  const [amountRange, setAmountRange] = React.useState<AmountRange | undefined>(
+    initialFilters?.amountMin !== undefined ||
+      initialFilters?.amountMax !== undefined
+      ? {
+          min: initialFilters.amountMin,
+          max: initialFilters.amountMax,
+        }
+      : undefined,
+  );
 
   // Count selected rows (this would come from TanStack Table in real implementation)
   const [selectedRowCount, _setSelectedRowCount] = React.useState(0);
@@ -69,6 +96,113 @@ export default function TransactionsClient({
       amountRange,
   );
 
+  // Update URL with current filters
+  const updateFilters = React.useCallback(() => {
+    const params = new URLSearchParams(searchParams);
+
+    // Reset to page 1 when filters change
+    params.set("page", "1");
+
+    // Update filter params
+    if (searchValue) {
+      params.set("search", searchValue);
+    } else {
+      params.delete("search");
+    }
+
+    if (selectedAccounts.size > 0) {
+      params.set("accountIds", Array.from(selectedAccounts).join(","));
+    } else {
+      params.delete("accountIds");
+    }
+
+    if (selectedCategories.size > 0) {
+      params.set("categoryIds", Array.from(selectedCategories).join(","));
+    } else {
+      params.delete("categoryIds");
+    }
+
+    if (selectedTypes.size > 0) {
+      params.set("types", Array.from(selectedTypes).join(","));
+    } else {
+      params.delete("types");
+    }
+
+    if (dateRange?.from) {
+      params.set("dateFrom", dateRange.from.toISOString());
+    } else {
+      params.delete("dateFrom");
+    }
+
+    if (dateRange?.to) {
+      params.set("dateTo", dateRange.to.toISOString());
+    } else {
+      params.delete("dateTo");
+    }
+
+    if (amountRange?.min !== undefined) {
+      params.set("amountMin", amountRange.min.toString());
+    } else {
+      params.delete("amountMin");
+    }
+
+    if (amountRange?.max !== undefined) {
+      params.set("amountMax", amountRange.max.toString());
+    } else {
+      params.delete("amountMax");
+    }
+
+    router.push(`?${params.toString()}`);
+  }, [
+    searchValue,
+    selectedAccounts,
+    selectedCategories,
+    selectedTypes,
+    dateRange,
+    amountRange,
+    searchParams,
+    router,
+  ]);
+
+  // Debounce search input
+  const SEARCH_DEBOUNCE_MS = 500;
+  React.useEffect(() => {
+    if (searchValue === initialFilters?.search) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      updateFilters();
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [searchValue, initialFilters?.search, updateFilters]);
+
+  // Update filters immediately for non-search changes
+  React.useEffect(() => {
+    if (
+      selectedAccounts === new Set(initialFilters?.accountIds || []) &&
+      selectedCategories === new Set(initialFilters?.categoryIds || []) &&
+      selectedTypes === new Set(initialFilters?.types || []) &&
+      dateRange === undefined &&
+      amountRange === undefined
+    ) {
+      return;
+    }
+
+    updateFilters();
+  }, [
+    selectedAccounts,
+    selectedCategories,
+    selectedTypes,
+    dateRange,
+    amountRange,
+    updateFilters,
+    initialFilters?.accountIds,
+    initialFilters?.categoryIds,
+    initialFilters?.types,
+  ]);
+
   const handleReset = () => {
     setSearchValue("");
     setSelectedAccounts(new Set());
@@ -76,15 +210,28 @@ export default function TransactionsClient({
     setSelectedTypes(new Set());
     setDateRange(undefined);
     setAmountRange(undefined);
+
+    // Clear URL params
+    const params = new URLSearchParams(searchParams);
+    params.delete("search");
+    params.delete("accountIds");
+    params.delete("categoryIds");
+    params.delete("types");
+    params.delete("dateFrom");
+    params.delete("dateTo");
+    params.delete("amountMin");
+    params.delete("amountMax");
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
   };
 
   const handleBulkDelete = () => {
-    // TODO: Implement bulk delete
+    // TODO: Implement bulk delete functionality
     console.log("Bulk delete not implemented yet");
   };
 
   const handleExportCSV = () => {
-    // TODO: Implement CSV export
+    // TODO: Implement CSV export functionality
     console.log("CSV export not implemented yet");
   };
 

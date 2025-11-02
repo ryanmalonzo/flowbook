@@ -1,4 +1,18 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import {
+  and,
+  asc,
+  between,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  isNull,
+  lte,
+  or,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import { db } from "@/db";
 import {
   categories,
@@ -33,20 +47,101 @@ export async function getTransactions(
   const offset = (page - 1) * pageSize;
 
   // Build the where clause
-  const whereConditions = [
+  const whereConditions: SQL[] = [
     eq(transactions.userId, userId),
     isNull(transactions.deletedAt),
   ];
 
-  // TODO: Apply filters when implementing filter functionality
-  // if (filters?.search) { ... }
-  // if (filters?.accountIds?.length) { ... }
-  // if (filters?.categoryIds?.length) { ... }
-  // if (filters?.types?.length) { ... }
-  // if (filters?.dateFrom) { ... }
-  // if (filters?.dateTo) { ... }
-  // if (filters?.amountMin !== undefined) { ... }
-  // if (filters?.amountMax !== undefined) { ... }
+  // Apply filters
+  if (filters?.search) {
+    whereConditions.push(
+      ilike(transactions.description, `%${filters.search}%`),
+    );
+  }
+
+  if (filters?.accountIds && filters.accountIds.length > 0) {
+    whereConditions.push(inArray(transactions.accountId, filters.accountIds));
+  }
+
+  if (filters?.categoryIds && filters.categoryIds.length > 0) {
+    const categoryCondition = or(
+      inArray(transactions.categoryId, filters.categoryIds),
+      ...(filters.categoryIds.includes("uncategorized")
+        ? [isNull(transactions.categoryId)]
+        : []),
+    );
+    if (categoryCondition) {
+      whereConditions.push(categoryCondition);
+    }
+  }
+
+  if (filters?.types && filters.types.length > 0) {
+    whereConditions.push(inArray(transactions.type, filters.types));
+  }
+
+  if (filters?.dateFrom && filters?.dateTo) {
+    whereConditions.push(
+      between(transactions.date, filters.dateFrom, filters.dateTo),
+    );
+  } else if (filters?.dateFrom) {
+    whereConditions.push(gte(transactions.date, filters.dateFrom));
+  } else if (filters?.dateTo) {
+    whereConditions.push(lte(transactions.date, filters.dateTo));
+  }
+
+  if (filters?.amountMin !== undefined && filters?.amountMax !== undefined) {
+    const amountCondition = and(
+      gte(
+        sql`CAST(${transactions.amount} AS DECIMAL)`,
+        filters.amountMin.toString(),
+      ),
+      lte(
+        sql`CAST(${transactions.amount} AS DECIMAL)`,
+        filters.amountMax.toString(),
+      ),
+    );
+    if (amountCondition) {
+      whereConditions.push(amountCondition);
+    }
+  } else if (filters?.amountMin !== undefined) {
+    whereConditions.push(
+      gte(
+        sql`CAST(${transactions.amount} AS DECIMAL)`,
+        filters.amountMin.toString(),
+      ),
+    );
+  } else if (filters?.amountMax !== undefined) {
+    whereConditions.push(
+      lte(
+        sql`CAST(${transactions.amount} AS DECIMAL)`,
+        filters.amountMax.toString(),
+      ),
+    );
+  }
+
+  // Determine sort order
+  let orderByClause: ReturnType<typeof asc | typeof desc>;
+  if (sort) {
+    const direction = sort.direction === "asc" ? asc : desc;
+    switch (sort.field) {
+      case "date":
+        orderByClause = direction(transactions.date);
+        break;
+      case "amount":
+        orderByClause = direction(sql`CAST(${transactions.amount} AS DECIMAL)`);
+        break;
+      case "description":
+        orderByClause = direction(transactions.description);
+        break;
+      case "type":
+        orderByClause = direction(transactions.type);
+        break;
+      default:
+        orderByClause = desc(transactions.date);
+    }
+  } else {
+    orderByClause = desc(transactions.date);
+  }
 
   // Fetch transactions with joins
   const transactionsData = await db
@@ -73,7 +168,7 @@ export async function getTransactions(
     )
     .leftJoin(categories, eq(transactions.categoryId, categories.id))
     .where(and(...whereConditions))
-    .orderBy(desc(transactions.date)) // TODO: Apply sort when implementing sort functionality
+    .orderBy(orderByClause)
     .limit(pageSize)
     .offset(offset);
 

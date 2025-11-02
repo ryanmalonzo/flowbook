@@ -2,7 +2,7 @@
 alwaysApply: true
 ---
 - Always use `pnpm` for all commands.
-- Run scripts using the `pnpm` scripts defined in `package.json`. For example: `pnpm db:generate`, `pnpm db:migrate`, or `pnpm lint`.
+- Run scripts using the `pnpm` scripts defined in `package.json`. For example: `pnpm typecheck`, `pnpm db:generate`, `pnpm db:migrate`, or `pnpm lint`.
 - When designing SQL tables that should support soft deletion, always include a `deleted_at` column.
 - Add comments only to lines with complex logic.
 - Use explicit and proper typings in all code.
