@@ -14,7 +14,7 @@
       "!dist",
       "!build",
       "!sql",
-      "!components/ui"
+      "!components/ui/**/*.tsx"
     ]
   },
   "formatter": {
