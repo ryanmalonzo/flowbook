@@ -1,8 +1,11 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { financialAccounts } from "@/db/schema/budget";
+import logger from "@/lib/logger";
 
 export async function getUserAccounts(userId: string) {
+  logger.debug({ userId }, "Fetching user accounts");
+
   const accounts = await db
     .select({
       id: financialAccounts.id,
@@ -19,5 +22,6 @@ export async function getUserAccounts(userId: string) {
       ),
     );
 
+  logger.info({ userId, count: accounts.length }, "Retrieved user accounts");
   return accounts;
 }

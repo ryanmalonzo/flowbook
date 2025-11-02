@@ -1,6 +1,7 @@
 import type { User } from "better-auth/types";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import logger from "@/lib/logger";
 
 /**
  * Fetches the current authenticated user from the session.
@@ -9,9 +10,17 @@ import { auth } from "@/lib/auth";
  * @returns The current user object or null if not authenticated
  */
 export async function getCurrentUser(): Promise<User | null> {
+  logger.debug("Validating user session");
+
   const sessionResponse = await auth.api.getSession({
     headers: await headers(),
   });
+
+  if (sessionResponse?.user) {
+    logger.debug({ userId: sessionResponse.user.id }, "User session validated");
+  } else {
+    logger.debug("No active user session found");
+  }
 
   return sessionResponse?.user ?? null;
 }
@@ -30,6 +39,9 @@ export async function getRequiredUser(): Promise<User> {
   const user = await getCurrentUser();
 
   if (!user) {
+    logger.warn(
+      "Unauthorized access attempt: user required but not authenticated",
+    );
     throw new Error(
       "User is required but not authenticated. This function should only be used in protected routes.",
     );

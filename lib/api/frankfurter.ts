@@ -1,3 +1,5 @@
+import { appFetch } from "@/lib/fetch";
+import logger from "@/lib/logger";
 import type { CurrencyCode } from "@/lib/types/currency";
 import { FALLBACK_RATES } from "@/lib/types/currency";
 
@@ -23,7 +25,7 @@ export async function fetchExchangeRates(
   base: CurrencyCode = "USD",
 ): Promise<Record<CurrencyCode, number>> {
   try {
-    const response = await fetch(
+    const response = await appFetch(
       `${FRANKFURTER_API_BASE}/v1/latest?base=${base}`,
       {
         next: { revalidate: 3600 },
@@ -49,22 +51,31 @@ export async function fetchExchangeRates(
       }
     }
 
+    logger.info(
+      { base, rateCount: Object.keys(rates).length },
+      "Successfully fetched exchange rates",
+    );
     return rates;
   } catch (error) {
-    console.warn("Failed to fetch exchange rates from Frankfurter:", error);
+    logger.warn(
+      { base, error },
+      "Failed to fetch exchange rates from Frankfurter",
+    );
 
     if (base === "USD") {
       const fallback: Record<CurrencyCode, number> = {
         USD: 1.0,
         ...FALLBACK_RATES,
       };
+      logger.info({ base }, "Using USD fallback rates");
       return fallback;
     }
 
     // For non-USD base, we'd need to calculate from USD rates
     // For now, return USD-based fallback with warning
-    console.warn(
-      `Non-USD base currency requested (${base}), but fallback rates are USD-based`,
+    logger.warn(
+      { base },
+      "Non-USD base currency requested, but fallback rates are USD-based",
     );
     const fallback: Record<CurrencyCode, number> = {
       USD: 1.0,

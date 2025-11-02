@@ -13,11 +13,17 @@ export function middleware(request: NextRequest) {
 
   // Redirect unauthenticated users from dashboard routes to sign-in
   if (isDashboardRoute && !isAuthenticated) {
+    console.log(
+      `Middleware: Redirecting unauthenticated user from ${pathname} to /sign-in`,
+    );
     return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
   // Redirect authenticated users from auth routes to dashboard
   if (isAuthRoute && isAuthenticated) {
+    console.log(
+      `Middleware: Redirecting authenticated user from ${pathname} to /dashboard`,
+    );
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
