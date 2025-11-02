@@ -1,6 +1,5 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/utils";
 import DashboardLayout from "./dashboard-layout";
 
 export default async function Layout({
@@ -8,14 +7,8 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch session server-side
-  const sessionResponse = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const user = await getCurrentUser();
 
-  const user = sessionResponse?.user;
-
-  // Redirect to sign-in if not authenticated
   if (!user) {
     redirect("/sign-in");
   }
