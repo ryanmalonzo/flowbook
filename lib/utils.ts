@@ -17,3 +17,13 @@ export function formatCurrency(amount: number, currency: string = "USD") {
     currency,
   }).format(amount);
 }
+
+/**
+ * Converts an amount from one currency to another using an exchange rate
+ * @param amount - The amount to convert
+ * @param exchangeRate - The exchange rate (amount in target currency per 1 unit of source currency)
+ * @returns The converted amount
+ */
+export function convertCurrency(amount: number, exchangeRate: number): number {
+  return amount * exchangeRate;
+}

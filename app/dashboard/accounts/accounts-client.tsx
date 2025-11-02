@@ -23,6 +23,7 @@ interface Account {
   type: "checking" | "savings" | "credit";
   balance: string | null;
   currency: string | null;
+  convertedBalance?: number; // Balance converted to default currency for totals
 }
 
 interface AccountsClientProps {
@@ -48,32 +49,30 @@ export default function AccountsClient({
 }: AccountsClientProps) {
   const t = useTranslations();
 
-  // Calculate assets (checking + savings)
+  // Calculate assets (checking + savings) using converted balances
   const assets = accounts
     .filter(
       (account) => account.type === "checking" || account.type === "savings",
     )
     .reduce((sum, account) => {
-      const balance = Number.parseFloat(account.balance || "0");
+      const balance =
+        account.convertedBalance ?? Number.parseFloat(account.balance || "0");
       return sum + balance;
     }, 0);
 
-  // Calculate debts (credit cards)
   const debts = accounts
     .filter((account) => account.type === "credit")
     .reduce((sum, account) => {
-      const balance = Number.parseFloat(account.balance || "0");
+      const balance =
+        account.convertedBalance ?? Number.parseFloat(account.balance || "0");
       return sum + balance;
     }, 0);
 
-  // Calculate net worth (assets - debts)
   const netWorth = assets - debts;
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Financial Summary Cards */}
       <div className="grid gap-4 sm:grid-cols-3">
-        {/* Assets Card */}
         <Card className="border-2">
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
@@ -86,7 +85,6 @@ export default function AccountsClient({
           </CardHeader>
         </Card>
 
-        {/* Debts Card */}
         <Card className="border-2">
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
@@ -99,7 +97,6 @@ export default function AccountsClient({
           </CardHeader>
         </Card>
 
-        {/* Net Worth Card */}
         <Card className="border-2">
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
@@ -121,7 +118,6 @@ export default function AccountsClient({
         </Card>
       </div>
 
-      {/* Accounts Grid */}
       {accounts.length === 0 ? (
         <Card className="border-dashed">
           <CardHeader className="pt-12 pb-8 text-center">
