@@ -24,6 +24,7 @@ export function SignUpForm({
 }: SignUpFormProps) {
   const t = useTranslations();
 
+  const usernameId = useId();
   const emailId = useId();
   const passwordId = useId();
   const passwordConfirmId = useId();
@@ -35,6 +36,28 @@ export function SignUpForm({
       </h1>
 
       <form onSubmit={onSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label
+            htmlFor={usernameId}
+            className="font-medium text-foreground text-sm"
+          >
+            {t("signUp.form.username.label")}
+          </Label>
+          <Input
+            id={usernameId}
+            type="text"
+            placeholder={t("signUp.form.username.placeholder")}
+            {...register("username")}
+            className="w-full"
+            autoComplete="username"
+          />
+          {errors.username && (
+            <p className="text-destructive text-sm">
+              {errors.username.message}
+            </p>
+          )}
+        </div>
+
         <div className="space-y-2">
           <Label
             htmlFor={emailId}

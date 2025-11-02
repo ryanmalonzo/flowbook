@@ -27,11 +27,10 @@ export default function SignUpPage() {
     reValidateMode: "onBlur",
   });
 
-  const onSubmit = async ({ email, password }: SignUpFormData) => {
+  const onSubmit = async ({ username, email, password }: SignUpFormData) => {
     const { error } = await authClient.signUp.email(
       {
-        // TODO: Add name field to the form
-        name: email,
+        name: username,
         email,
         password,
       },
