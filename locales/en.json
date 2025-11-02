@@ -69,6 +69,20 @@
     "user": "User",
     "noEmail": "No email"
   },
+  "accounts": {
+    "title": "Accounts",
+    "totalBalance": "Total Balance",
+    "accountType": {
+      "checking": "Checking",
+      "savings": "Savings",
+      "credit": "Credit"
+    },
+    "balance": "Balance",
+    "empty": {
+      "title": "No accounts yet",
+      "description": "You don't have any financial accounts set up. Add your first account to start tracking your finances."
+    }
+  },
   "betterAuth": {
     "error": {
       "USER_NOT_FOUND": "User not found",
