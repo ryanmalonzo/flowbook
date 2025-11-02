@@ -1,0 +1,2 @@
+CREATE TYPE "public"."account_type" AS ENUM('checking', 'savings', 'credit');--> statement-breakpoint
+ALTER TABLE "financial_accounts" ALTER COLUMN "type" SET DATA TYPE "public"."account_type" USING "type"::"public"."account_type";

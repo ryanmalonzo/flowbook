@@ -15,6 +15,20 @@
       "when": 1761474820120,
       "tag": "0001_faithful_marauders",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762082185643,
+      "tag": "0002_romantic_mongu",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762082360683,
+      "tag": "0003_melodic_cassandra_nova",
+      "breakpoints": true
     }
   ]
 }
