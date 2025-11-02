@@ -65,6 +65,7 @@
     "dashboard": "Dashboard",
     "transactions": "Transactions",
     "accounts": "Accounts",
+    "categories": "Categories",
     "signOut": "Sign out",
     "user": "User",
     "noEmail": "No email"
@@ -85,6 +86,13 @@
     "empty": {
       "title": "No accounts yet",
       "description": "You don't have any financial accounts set up. Add your first account to start tracking your finances."
+    }
+  },
+  "categories": {
+    "title": "Categories",
+    "empty": {
+      "title": "No categories yet",
+      "description": "Create categories to organize your transactions"
     }
   },
   "betterAuth": {

@@ -1,7 +1,7 @@
 "use client";
 
 import type { User } from "better-auth/types";
-import { Home, Landmark, LogOut, Settings, Wallet } from "lucide-react";
+import { Home, Landmark, LogOut, Settings, Tag, Wallet } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -61,6 +61,9 @@ export default function DashboardLayout({
     if (pathname === "/dashboard/accounts") {
       return t("accounts.title");
     }
+    if (pathname === "/dashboard/categories") {
+      return t("categories.title");
+    }
     if (pathname === "/dashboard/transactions") {
       return t("dashboard.transactions");
     }
@@ -111,6 +114,17 @@ export default function DashboardLayout({
                     <a href="/dashboard/accounts">
                       <Landmark />
                       <span>{t("dashboard.accounts")}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild={true}
+                    isActive={pathname === "/dashboard/categories"}
+                  >
+                    <a href="/dashboard/categories">
+                      <Tag />
+                      <span>{t("dashboard.categories")}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
