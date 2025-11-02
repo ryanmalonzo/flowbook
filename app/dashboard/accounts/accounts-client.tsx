@@ -38,11 +38,26 @@ const accountTypeColors = {
 export default function AccountsClient({ accounts }: AccountsClientProps) {
   const t = useTranslations();
 
-  // Calculate total balance
-  const totalBalance = accounts.reduce((sum, account) => {
-    const balance = Number.parseFloat(account.balance || "0");
-    return sum + balance;
-  }, 0);
+  // Calculate assets (checking + savings)
+  const assets = accounts
+    .filter(
+      (account) => account.type === "checking" || account.type === "savings",
+    )
+    .reduce((sum, account) => {
+      const balance = Number.parseFloat(account.balance || "0");
+      return sum + balance;
+    }, 0);
+
+  // Calculate debts (credit cards)
+  const debts = accounts
+    .filter((account) => account.type === "credit")
+    .reduce((sum, account) => {
+      const balance = Number.parseFloat(account.balance || "0");
+      return sum + balance;
+    }, 0);
+
+  // Calculate net worth (assets - debts)
+  const netWorth = assets - debts;
 
   const formatCurrency = (amount: number, currency: string = "USD") => {
     return new Intl.NumberFormat("en-US", {
@@ -53,18 +68,47 @@ export default function AccountsClient({ accounts }: AccountsClientProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Total Balance Card */}
-      <Card className="border-2">
-        <CardHeader>
-          <CardDescription className="flex items-center gap-2">
-            <Landmark className="h-4 w-4" />
-            {t("accounts.totalBalance")}
-          </CardDescription>
-          <CardTitle className="font-bold text-4xl">
-            {formatCurrency(totalBalance)}
-          </CardTitle>
-        </CardHeader>
-      </Card>
+      {/* Financial Summary Cards */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        {/* Assets Card */}
+        <Card className="border-2">
+          <CardHeader>
+            <CardDescription className="flex items-center gap-2">
+              <PiggyBank className="h-4 w-4" />
+              {t("accounts.assets")}
+            </CardDescription>
+            <CardTitle className="font-bold text-4xl">
+              {formatCurrency(assets)}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+
+        {/* Debts Card */}
+        <Card className="border-2">
+          <CardHeader>
+            <CardDescription className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              {t("accounts.debts")}
+            </CardDescription>
+            <CardTitle className="font-bold text-4xl">
+              {formatCurrency(debts)}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+
+        {/* Net Worth Card */}
+        <Card className="border-2">
+          <CardHeader>
+            <CardDescription className="flex items-center gap-2">
+              <Landmark className="h-4 w-4" />
+              {t("accounts.netWorth")}
+            </CardDescription>
+            <CardTitle className="font-bold text-4xl">
+              {formatCurrency(netWorth)}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
 
       {/* Accounts Grid */}
       {accounts.length === 0 ? (

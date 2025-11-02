@@ -72,6 +72,9 @@
   "accounts": {
     "title": "Accounts",
     "totalBalance": "Total Balance",
+    "assets": "Total Assets",
+    "debts": "Total Debts",
+    "netWorth": "Net Worth",
     "accountType": {
       "checking": "Checking",
       "savings": "Savings",
