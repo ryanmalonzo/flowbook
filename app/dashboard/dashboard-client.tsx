@@ -1,7 +1,7 @@
 "use client";
 
 import type { User } from "better-auth/types";
-import { Home, LogOut, Settings, Wallet } from "lucide-react";
+import { Home, Landmark, LogOut, Settings, Wallet } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -79,6 +79,14 @@ export default function DashboardClient({ user }: DashboardClientProps) {
                     <a href="/dashboard">
                       <Home />
                       <span>Dashboard</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild={true}>
+                    <a href="/dashboard/accounts">
+                      <Landmark />
+                      <span>{t("dashboard.accounts")}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

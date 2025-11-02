@@ -64,6 +64,7 @@
   "dashboard": {
     "dashboard": "Dashboard",
     "transactions": "Transactions",
+    "accounts": "Accounts",
     "signOut": "Sign out",
     "user": "User",
     "noEmail": "No email"
