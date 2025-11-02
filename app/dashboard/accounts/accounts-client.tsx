@@ -1,6 +1,6 @@
 "use client";
 
-import { CreditCard, Landmark, PiggyBank, Wallet } from "lucide-react";
+import { CreditCard, Info, Landmark, PiggyBank, Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,6 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Account {
   id: string;
@@ -102,6 +107,14 @@ export default function AccountsClient({ accounts }: AccountsClientProps) {
             <CardDescription className="flex items-center gap-2">
               <Landmark className="h-4 w-4" />
               {t("accounts.netWorth")}
+              <Tooltip>
+                <TooltipTrigger asChild={true}>
+                  <Info className="h-4 w-4 cursor-help text-muted-foreground" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p className="text-wrap">{t("accounts.netWorthTooltip")}</p>
+                </TooltipContent>
+              </Tooltip>
             </CardDescription>
             <CardTitle className="font-bold text-4xl">
               {formatCurrency(netWorth)}

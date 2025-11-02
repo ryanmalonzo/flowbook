@@ -75,6 +75,7 @@
     "assets": "Total Assets",
     "debts": "Total Debts",
     "netWorth": "Net Worth",
+    "netWorthTooltip": "Net Worth is calculated by subtracting your total debts (credit card balances) from your total assets (checking and savings accounts). This gives you a snapshot of your overall financial position.",
     "accountType": {
       "checking": "Checking",
       "savings": "Savings",
