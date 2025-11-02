@@ -1,10 +1,9 @@
 "use client";
 
-import { DynamicIcon } from "lucide-react/dynamic";
+import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import { useTranslations } from "next-intl";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -65,7 +64,7 @@ export default function CategoriesClient({
                       }}
                     >
                       <DynamicIcon
-                        name={iconName}
+                        name={iconName as IconName}
                         size={20}
                         style={{ color }}
                       />

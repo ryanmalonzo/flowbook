@@ -95,6 +95,72 @@
       "description": "Create categories to organize your transactions"
     }
   },
+  "transactions": {
+    "title": "Transactions",
+    "columns": {
+      "date": "Date",
+      "description": "Description",
+      "category": "Category",
+      "account": "Account",
+      "type": "Type",
+      "amount": "Amount",
+      "actions": "Actions"
+    },
+    "filters": {
+      "search": "Search transactions...",
+      "dateRange": "Date Range",
+      "account": "Account",
+      "category": "Category",
+      "type": "Type",
+      "amountRange": "Amount Range",
+      "amountRangeDescription": "Filter transactions by amount",
+      "minAmount": "Min",
+      "maxAmount": "Max",
+      "apply": "Apply",
+      "clear": "Clear",
+      "clearAll": "Clear filters",
+      "reset": "Reset",
+      "selected": "selected",
+      "noResultsFound": "No results found."
+    },
+    "type": {
+      "income": "Income",
+      "expense": "Expense",
+      "transfer": "Transfer"
+    },
+    "category": {
+      "uncategorized": "Uncategorized"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    },
+    "bulkActions": {
+      "label": "Bulk actions",
+      "deleteSelected": "Delete selected",
+      "exportCsv": "Export CSV"
+    },
+    "empty": {
+      "title": "No transactions yet",
+      "description": "Start tracking your finances by adding your first transaction"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} results",
+      "noResults": "No results",
+      "rowsPerPage": "Rows per page",
+      "page": "Page {current} of {total}",
+      "goToFirstPage": "Go to first page",
+      "goToPreviousPage": "Go to previous page",
+      "goToNextPage": "Go to next page",
+      "goToLastPage": "Go to last page"
+    },
+    "table": {
+      "noResults": "No results."
+    }
+  },
   "betterAuth": {
     "error": {
       "USER_NOT_FOUND": "User not found",
