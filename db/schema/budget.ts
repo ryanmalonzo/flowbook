@@ -1,5 +1,6 @@
 import {
   decimal,
+  index,
   pgEnum,
   pgTable,
   text,
@@ -12,6 +13,12 @@ export const accountTypeEnum = pgEnum("account_type", [
   "checking",
   "savings",
   "credit",
+]);
+
+export const transactionTypeEnum = pgEnum("transaction_type", [
+  "income",
+  "expense",
+  "transfer",
 ]);
 
 export const currencyEnum = pgEnum("currency", [
@@ -91,5 +98,56 @@ export const exchangeRates = pgTable(
   },
   (table) => ({
     baseTargetUnique: unique().on(table.baseCurrency, table.targetCurrency),
+  }),
+);
+
+export const categories = pgTable("categories", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  color: text("color"),
+  icon: text("icon"),
+  deletedAt: timestamp("deleted_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    accountId: text("account_id")
+      .notNull()
+      .references(() => financialAccounts.id, { onDelete: "cascade" }),
+    categoryId: text("category_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+    description: text("description").notNull(),
+    date: timestamp("date").notNull(),
+    type: transactionTypeEnum("type").notNull(),
+    deletedAt: timestamp("deleted_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => ({
+    accountIdIdx: index("transactions_account_id_idx").on(table.accountId),
+    userIdIdx: index("transactions_user_id_idx").on(table.userId),
+    dateIdx: index("transactions_date_idx").on(table.date),
+    accountDateIdx: index("transactions_account_date_idx").on(
+      table.accountId,
+      table.date,
+    ),
   }),
 );

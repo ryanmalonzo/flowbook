@@ -50,6 +50,20 @@
       "when": 1762098010537,
       "tag": "0006_striped_sharon_carter",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1762113237376,
+      "tag": "0007_fair_major_mapleleaf",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1762113909763,
+      "tag": "0008_fast_caretaker",
+      "breakpoints": true
     }
   ]
 }
