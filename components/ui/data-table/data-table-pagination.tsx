@@ -1,5 +1,6 @@
 "use client";
 
+import type { Table } from "@tanstack/react-table";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -7,7 +8,6 @@ import {
   ChevronsRightIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,56 +18,46 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface DataTablePaginationProps {
-  currentPage: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
+interface DataTablePaginationProps<TData> {
+  table: Table<TData>;
 }
 
-export function DataTablePagination({
-  currentPage,
-  pageSize,
-  total,
-  totalPages,
-}: DataTablePaginationProps) {
+export function DataTablePagination<TData>({
+  table,
+}: DataTablePaginationProps<TData>) {
   const t = useTranslations("transactions");
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const updatePage = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
-    router.push(`?${params.toString()}`);
-  };
+  const currentPage = table.getState().pagination.pageIndex + 1;
+  const pageSize = table.getState().pagination.pageSize;
+  const totalRows = table.getFilteredRowModel().rows.length;
+  const totalPages = table.getPageCount();
 
-  const updatePageSize = (newPageSize: string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("pageSize", newPageSize);
-    params.set("page", "1"); // Reset to first page
-    router.push(`?${params.toString()}`);
-  };
-
-  const startIndex = (currentPage - 1) * pageSize + 1;
-  const endIndex = Math.min(currentPage * pageSize, total);
+  const startIndex = table.getState().pagination.pageIndex * pageSize + 1;
+  const endIndex = Math.min(
+    (table.getState().pagination.pageIndex + 1) * pageSize,
+    totalRows,
+  );
 
   return (
     <div className="flex items-center justify-between px-2">
       <div className="flex-1 text-muted-foreground text-sm">
-        {total === 0
+        {totalRows === 0
           ? t("pagination.noResults")
           : t("pagination.showing", {
               start: startIndex,
               end: endIndex,
-              total,
+              total: totalRows,
             })}
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">
-            {t("pagination.rowsPerPage")}
-          </p>
-          <Select value={pageSize.toString()} onValueChange={updatePageSize}>
+          <p className="text-sm font-medium">{t("pagination.rowsPerPage")}</p>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
+          >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue placeholder={pageSize.toString()} />
             </SelectTrigger>
@@ -90,45 +80,37 @@ export function DataTablePagination({
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => updatePage(1)}
-            disabled={currentPage <= 1}
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">
-              {t("pagination.goToFirstPage")}
-            </span>
+            <span className="sr-only">{t("pagination.goToFirstPage")}</span>
             <ChevronsLeftIcon className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => updatePage(currentPage - 1)}
-            disabled={currentPage <= 1}
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">
-              {t("pagination.goToPreviousPage")}
-            </span>
+            <span className="sr-only">{t("pagination.goToPreviousPage")}</span>
             <ChevronLeftIcon className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
             className="h-8 w-8 p-0"
-            onClick={() => updatePage(currentPage + 1)}
-            disabled={currentPage >= totalPages}
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">
-              {t("pagination.goToNextPage")}
-            </span>
+            <span className="sr-only">{t("pagination.goToNextPage")}</span>
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
-            onClick={() => updatePage(totalPages)}
-            disabled={currentPage >= totalPages}
+            onClick={() => table.setPageIndex(totalPages - 1)}
+            disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">
-              {t("pagination.goToLastPage")}
-            </span>
+            <span className="sr-only">{t("pagination.goToLastPage")}</span>
             <ChevronsRightIcon className="h-4 w-4" />
           </Button>
         </div>

@@ -28,6 +28,59 @@ import type {
 } from "./types";
 
 /**
+ * Fetches all transactions for a user without pagination.
+ * Used for client-side filtering, sorting, and pagination.
+ * Joins with accounts and categories for display.
+ * Excludes soft-deleted transactions.
+ */
+export async function getAllTransactions(userId: string) {
+  logger.debug({ userId }, "Fetching all user transactions");
+
+  // Base conditions: user's transactions, not deleted
+  const whereConditions: SQL[] = [
+    eq(transactions.userId, userId),
+    isNull(transactions.deletedAt),
+  ];
+
+  // Fetch all transactions with joins
+  const transactionsData = await db
+    .select({
+      id: transactions.id,
+      userId: transactions.userId,
+      accountId: transactions.accountId,
+      accountName: financialAccounts.name,
+      categoryId: transactions.categoryId,
+      categoryName: categories.name,
+      categoryColor: categories.color,
+      categoryIcon: categories.icon,
+      amount: transactions.amount,
+      description: transactions.description,
+      date: transactions.date,
+      type: transactions.type,
+      createdAt: transactions.createdAt,
+      updatedAt: transactions.updatedAt,
+    })
+    .from(transactions)
+    .leftJoin(
+      financialAccounts,
+      eq(transactions.accountId, financialAccounts.id),
+    )
+    .leftJoin(categories, eq(transactions.categoryId, categories.id))
+    .where(and(...whereConditions))
+    .orderBy(desc(transactions.date));
+
+  logger.info(
+    { userId, count: transactionsData.length },
+    "Retrieved all user transactions",
+  );
+
+  return transactionsData.map((t) => ({
+    ...t,
+    type: t.type as "income" | "expense" | "transfer",
+  }));
+}
+
+/**
  * Fetches transactions for a user with pagination.
  * Joins with accounts and categories for display.
  * Excludes soft-deleted transactions.

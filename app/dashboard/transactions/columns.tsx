@@ -55,7 +55,7 @@ export function getColumns(
     {
       accessorKey: "date",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Date" sortField="date" />
+        <DataTableColumnHeader column={column} title="Date" />
       ),
       cell: ({ row }) => {
         const date = row.getValue("date") as Date;
@@ -67,11 +67,7 @@ export function getColumns(
     {
       accessorKey: "description",
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Description"
-          sortField="description"
-        />
+        <DataTableColumnHeader column={column} title="Description" />
       ),
       cell: ({ row }) => {
         return (
@@ -141,7 +137,7 @@ export function getColumns(
     {
       accessorKey: "type",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Type" sortField="type" />
+        <DataTableColumnHeader column={column} title="Type" />
       ),
       cell: ({ row }) => {
         const type = row.getValue("type") as "income" | "expense" | "transfer";
@@ -158,11 +154,7 @@ export function getColumns(
     {
       accessorKey: "amount",
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title="Amount"
-          sortField="amount"
-        />
+        <DataTableColumnHeader column={column} title="Amount" />
       ),
       cell: ({ row }) => {
         const amount = Number.parseFloat(row.getValue("amount"));
