@@ -29,6 +29,8 @@ export function DataTableAmountRangeFilter({
   onAmountRangeChange,
 }: DataTableAmountRangeFilterProps) {
   const t = useTranslations("transactions");
+  const minAmountId = React.useId();
+  const maxAmountId = React.useId();
   const [localMin, setLocalMin] = React.useState<string>(
     amountRange?.min?.toString() || "",
   );
@@ -36,7 +38,8 @@ export function DataTableAmountRangeFilter({
     amountRange?.max?.toString() || "",
   );
 
-  const hasRange = amountRange?.min !== undefined || amountRange?.max !== undefined;
+  const hasRange =
+    amountRange?.min !== undefined || amountRange?.max !== undefined;
 
   const handleApply = () => {
     const min = localMin ? Number.parseFloat(localMin) : undefined;
@@ -65,7 +68,9 @@ export function DataTableAmountRangeFilter({
           {hasRange && (
             <span className="ml-2 text-muted-foreground">
               {amountRange?.min !== undefined && `$${amountRange.min}`}
-              {amountRange?.min !== undefined && amountRange?.max !== undefined && " - "}
+              {amountRange?.min !== undefined &&
+                amountRange?.max !== undefined &&
+                " - "}
               {amountRange?.max !== undefined && `$${amountRange.max}`}
             </span>
           )}
@@ -83,11 +88,9 @@ export function DataTableAmountRangeFilter({
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="min-amount">
-                {t("filters.minAmount")}
-              </Label>
+              <Label htmlFor={minAmountId}>{t("filters.minAmount")}</Label>
               <Input
-                id="min-amount"
+                id={minAmountId}
                 type="number"
                 placeholder="0.00"
                 value={localMin}
@@ -96,11 +99,9 @@ export function DataTableAmountRangeFilter({
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="max-amount">
-                {t("filters.maxAmount")}
-              </Label>
+              <Label htmlFor={maxAmountId}>{t("filters.maxAmount")}</Label>
               <Input
-                id="max-amount"
+                id={maxAmountId}
                 type="number"
                 placeholder="1000.00"
                 value={localMax}
@@ -127,4 +128,3 @@ export function DataTableAmountRangeFilter({
     </Popover>
   );
 }
-

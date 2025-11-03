@@ -3,25 +3,20 @@
 import {
   ArrowDownCircle,
   ArrowUpCircle,
-  Info,
   PiggyBank,
   TrendingUp,
   Wallet,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { EntityCard } from "@/components/shared/entity-card";
+import { MetricCard } from "@/components/shared/metric-card";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/utils";
 
 interface Account {
@@ -73,75 +68,37 @@ export default function AccountsClient({
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-2">
-          <CardHeader>
-            <CardDescription className="flex items-center gap-2">
-              <PiggyBank className="h-4 w-4" />
-              {t("accounts.assets")}
-            </CardDescription>
-            <CardTitle className="font-bold text-4xl">
-              {formatCurrency(assets, defaultCurrency)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+        <MetricCard
+          icon={PiggyBank}
+          label={t("accounts.assets")}
+          value={assets}
+          currency={defaultCurrency}
+        />
 
-        <Card className="border-2">
-          <CardHeader>
-            <CardDescription className="flex items-center gap-2">
-              <ArrowUpCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-              {t("accounts.monthlyIncome")}
-            </CardDescription>
-            <CardTitle className="font-bold text-4xl text-green-600 dark:text-green-400">
-              {formatCurrency(monthlyIncome, defaultCurrency)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+        <MetricCard
+          icon={ArrowUpCircle}
+          label={t("accounts.monthlyIncome")}
+          value={monthlyIncome}
+          currency={defaultCurrency}
+          valueColor="green"
+        />
 
-        <Card className="border-2">
-          <CardHeader>
-            <CardDescription className="flex items-center gap-2">
-              <ArrowDownCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-              {t("accounts.monthlyExpenses")}
-            </CardDescription>
-            <CardTitle className="font-bold text-4xl text-red-600 dark:text-red-400">
-              {formatCurrency(monthlyExpenses, defaultCurrency)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+        <MetricCard
+          icon={ArrowDownCircle}
+          label={t("accounts.monthlyExpenses")}
+          value={monthlyExpenses}
+          currency={defaultCurrency}
+          valueColor="red"
+        />
 
-        <Card className="border-2">
-          <CardHeader>
-            <CardDescription className="flex items-center gap-2">
-              <TrendingUp
-                className={`h-4 w-4 ${
-                  isPositiveCashFlow
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400"
-                }`}
-              />
-              {t("accounts.netCashFlow")}
-              <Tooltip>
-                <TooltipTrigger asChild={true}>
-                  <Info className="h-4 w-4 cursor-help text-muted-foreground" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <p className="text-wrap">
-                    {t("accounts.netCashFlowTooltip")}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </CardDescription>
-            <CardTitle
-              className={`font-bold text-4xl ${
-                isPositiveCashFlow
-                  ? "text-green-600 dark:text-green-400"
-                  : "text-red-600 dark:text-red-400"
-              }`}
-            >
-              {formatCurrency(netCashFlow, defaultCurrency)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
+        <MetricCard
+          icon={TrendingUp}
+          label={t("accounts.netCashFlow")}
+          value={netCashFlow}
+          currency={defaultCurrency}
+          valueColor={isPositiveCashFlow ? "green" : "red"}
+          tooltip={t("accounts.netCashFlowTooltip")}
+        />
       </div>
 
       {accounts.length === 0 ? (
@@ -166,37 +123,24 @@ export default function AccountsClient({
             const currency = account.currency || "USD";
 
             return (
-              <Card
+              <EntityCard
                 key={account.id}
-                className="transition-shadow hover:shadow-md"
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="rounded-lg bg-muted p-2">
-                        <Icon className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                    </div>
-                    <Badge
-                      variant="secondary"
-                      className={accountTypeColors[account.type]}
-                    >
-                      {t(`accounts.accountType.${account.type}`)}
-                    </Badge>
-                  </div>
-                  <CardTitle className="mt-4">{account.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col">
-                    <span className="text-muted-foreground text-sm">
-                      {t("accounts.balance")}
-                    </span>
-                    <span className="font-semibold text-2xl">
-                      {formatCurrency(balance, currency)}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+                icon={Icon}
+                title={account.name}
+                badge={
+                  <Badge
+                    variant="secondary"
+                    className={accountTypeColors[account.type]}
+                  >
+                    {t(`accounts.accountType.${account.type}`)}
+                  </Badge>
+                }
+                contentLabel={t("accounts.balance")}
+                contentValue={balance}
+                contentFormatter={(value) =>
+                  formatCurrency(Number(value), currency)
+                }
+              />
             );
           })}
         </div>

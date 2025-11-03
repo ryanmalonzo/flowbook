@@ -3,8 +3,6 @@
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -12,7 +10,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type SortingState,
   useReactTable,
+  type VisibilityState,
 } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
 import * as React from "react";
@@ -65,14 +65,21 @@ export function DataTable<TData, TValue>({
 
   // Client-side filtering
   const filteredData = React.useMemo(() => {
-    return data.filter((row: any) => {
+    return data.filter((row: TData) => {
       // Search filter
-      if (searchValue && !row.description?.toLowerCase().includes(searchValue.toLowerCase())) {
+      if (
+        searchValue &&
+        !row.description?.toLowerCase().includes(searchValue.toLowerCase())
+      ) {
         return false;
       }
 
       // Account filter
-      if (selectedAccounts && selectedAccounts.size > 0 && !selectedAccounts.has(row.accountId)) {
+      if (
+        selectedAccounts &&
+        selectedAccounts.size > 0 &&
+        !selectedAccounts.has(row.accountId)
+      ) {
         return false;
       }
 
@@ -85,7 +92,11 @@ export function DataTable<TData, TValue>({
       }
 
       // Type filter
-      if (selectedTypes && selectedTypes.size > 0 && !selectedTypes.has(row.type)) {
+      if (
+        selectedTypes &&
+        selectedTypes.size > 0 &&
+        !selectedTypes.has(row.type)
+      ) {
         return false;
       }
 
@@ -113,7 +124,15 @@ export function DataTable<TData, TValue>({
 
       return true;
     });
-  }, [data, searchValue, selectedAccounts, selectedCategories, selectedTypes, dateRange, amountRange]);
+  }, [
+    data,
+    searchValue,
+    selectedAccounts,
+    selectedCategories,
+    selectedTypes,
+    dateRange,
+    amountRange,
+  ]);
 
   const table = useReactTable({
     data: filteredData,
@@ -160,7 +179,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows?.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -193,4 +212,3 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
-

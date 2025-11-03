@@ -2,7 +2,6 @@
 
 import { CalendarIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import * as React from "react";
 import type { DateRange } from "react-day-picker";
 
 import { Button } from "@/components/ui/button";
@@ -31,10 +30,7 @@ export function DataTableDateRangeFilter({
         <Button
           variant="outline"
           size="sm"
-          className={cn(
-            "h-8 border-dashed",
-            dateRange?.from && "border-solid",
-          )}
+          className={cn("h-8 border-dashed", dateRange?.from && "border-solid")}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {t("filters.dateRange")}
@@ -59,4 +55,3 @@ export function DataTableDateRangeFilter({
     </Popover>
   );
 }
-

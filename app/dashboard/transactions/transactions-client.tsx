@@ -1,24 +1,20 @@
 "use client";
 
-import { Download, Trash2, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/shared/data-table/data-table";
+import { DataTableAmountRangeFilter } from "@/components/shared/data-table/data-table-amount-range-filter";
+import { DataTableDateRangeFilter } from "@/components/shared/data-table/data-table-date-range-filter";
+import { DataTableFacetedFilter } from "@/components/shared/data-table/data-table-faceted-filter";
+import { DataTableToolbar } from "@/components/shared/data-table/data-table-toolbar";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table/data-table";
-import { DataTableAmountRangeFilter } from "@/components/ui/data-table/data-table-amount-range-filter";
-import { DataTableDateRangeFilter } from "@/components/ui/data-table/data-table-date-range-filter";
-import { DataTableFacetedFilter } from "@/components/ui/data-table/data-table-faceted-filter";
-import { DataTableToolbar } from "@/components/ui/data-table/data-table-toolbar";
-import { Separator } from "@/components/ui/separator";
 import { getColumns } from "./columns";
 import type { Transaction } from "./types";
 
@@ -76,12 +72,12 @@ export default function TransactionsClient({
     setAmountRange(undefined);
   };
 
-  const handleBulkDelete = () => {
+  const _handleBulkDelete = () => {
     // TODO: Implement bulk delete functionality
     console.log("Bulk delete not implemented yet");
   };
 
-  const handleExportCSV = () => {
+  const _handleExportCSV = () => {
     // TODO: Implement CSV export functionality
     console.log("CSV export not implemented yet");
   };

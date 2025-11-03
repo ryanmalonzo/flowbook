@@ -22,6 +22,20 @@ interface DataTablePaginationProps<TData> {
   table: Table<TData>;
 }
 
+const PAGE_SIZE_10 = 10;
+const PAGE_SIZE_20 = 20;
+const PAGE_SIZE_30 = 30;
+const PAGE_SIZE_50 = 50;
+const PAGE_SIZE_100 = 100;
+
+const PAGE_SIZE_OPTIONS = [
+  PAGE_SIZE_10,
+  PAGE_SIZE_20,
+  PAGE_SIZE_30,
+  PAGE_SIZE_50,
+  PAGE_SIZE_100,
+] as const;
+
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
@@ -51,7 +65,7 @@ export function DataTablePagination<TData>({
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">{t("pagination.rowsPerPage")}</p>
+          <p className="font-medium text-sm">{t("pagination.rowsPerPage")}</p>
           <Select
             value={pageSize.toString()}
             onValueChange={(value) => {
@@ -62,7 +76,7 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={pageSize.toString()} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 50, 100].map((size) => (
+              {PAGE_SIZE_OPTIONS.map((size) => (
                 <SelectItem key={size} value={size.toString()}>
                   {size}
                 </SelectItem>
@@ -70,7 +84,7 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className="flex w-[100px] items-center justify-center font-medium text-sm">
           {t("pagination.page", {
             current: currentPage,
             total: totalPages || 1,
@@ -118,4 +132,3 @@ export function DataTablePagination<TData>({
     </div>
   );
 }
-

@@ -2,7 +2,7 @@
 
 import { CheckIcon, PlusCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import * as React from "react";
+import type * as React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,4 +147,3 @@ export function DataTableFacetedFilter({
     </Popover>
   );
 }
-

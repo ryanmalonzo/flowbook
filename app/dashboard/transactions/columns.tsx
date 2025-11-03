@@ -4,11 +4,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { DynamicIcon, type IconName } from "lucide-react/dynamic";
 import type { useTranslations } from "next-intl";
-
+import { DataTableColumnHeader } from "@/components/shared/data-table/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 import {
   DropdownMenu,
   DropdownMenuContent,
