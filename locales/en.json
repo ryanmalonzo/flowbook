@@ -74,13 +74,13 @@
     "title": "Accounts",
     "totalBalance": "Total Balance",
     "assets": "Total Assets",
-    "debts": "Total Debts",
-    "netWorth": "Net Worth",
-    "netWorthTooltip": "Net Worth is calculated by subtracting your total debts (credit card balances) from your total assets (checking and savings accounts). This gives you a snapshot of your overall financial position.",
+    "monthlyIncome": "Monthly Income",
+    "monthlyExpenses": "Monthly Expenses",
+    "netCashFlow": "Net Cash Flow",
+    "netCashFlowTooltip": "Net cash flow is calculated by subtracting monthly expenses from monthly income.",
     "accountType": {
       "checking": "Checking",
-      "savings": "Savings",
-      "credit": "Credit"
+      "savings": "Savings"
     },
     "balance": "Balance",
     "empty": {

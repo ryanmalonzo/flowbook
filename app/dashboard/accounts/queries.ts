@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull, lte, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { financialAccounts, transactions } from "@/db/schema/budget";
 import logger from "@/lib/logger";
@@ -120,4 +120,75 @@ export async function getUserAccounts(userId: string) {
     "Retrieved user accounts",
   );
   return accountsWithBalances;
+}
+
+/**
+ * Gets monthly transaction statistics for a user.
+ * Calculates total income, total expenses, and net cash flow for the current month.
+ * Returns amounts grouped by currency for conversion.
+ * Excludes soft-deleted transactions and transfers.
+ */
+export async function getMonthlyTransactionStats(userId: string) {
+  logger.debug({ userId }, "Fetching monthly transaction stats");
+
+  // Get first day of current month and today
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1); // End of today
+
+  // Fetch income and expenses for current month, grouped by currency
+  const results = await db
+    .select({
+      type: transactions.type,
+      currency: financialAccounts.currency,
+      total: sql<string>`
+        COALESCE(SUM(${transactions.amount}), 0)
+      `,
+    })
+    .from(transactions)
+    .innerJoin(
+      financialAccounts,
+      eq(transactions.accountId, financialAccounts.id),
+    )
+    .where(
+      and(
+        eq(transactions.userId, userId),
+        isNull(transactions.deletedAt),
+        gte(transactions.date, firstDayOfMonth),
+        lte(transactions.date, today),
+        or(eq(transactions.type, "income"), eq(transactions.type, "expense")),
+      ),
+    )
+    .groupBy(transactions.type, financialAccounts.currency);
+
+  // Initialize totals by currency
+  const incomeByCurrency: Record<string, string> = {};
+  const expensesByCurrency: Record<string, string> = {};
+
+  for (const result of results) {
+    const currency = result.currency || "USD";
+    const total = result.total || "0";
+
+    if (result.type === "income") {
+      incomeByCurrency[currency] = (
+        Number.parseFloat(incomeByCurrency[currency] || "0") +
+        Number.parseFloat(total)
+      ).toString();
+    } else if (result.type === "expense") {
+      expensesByCurrency[currency] = (
+        Number.parseFloat(expensesByCurrency[currency] || "0") +
+        Number.parseFloat(total)
+      ).toString();
+    }
+  }
+
+  logger.info(
+    { userId, incomeByCurrency, expensesByCurrency },
+    "Retrieved monthly transaction stats",
+  );
+
+  return {
+    incomeByCurrency,
+    expensesByCurrency,
+  };
 }

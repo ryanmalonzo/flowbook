@@ -1,6 +1,13 @@
 "use client";
 
-import { CreditCard, Info, Landmark, PiggyBank, Wallet } from "lucide-react";
+import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Info,
+  PiggyBank,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,7 +27,7 @@ import { formatCurrency } from "@/lib/utils";
 interface Account {
   id: string;
   name: string;
-  type: "checking" | "savings" | "credit";
+  type: "checking" | "savings";
   balance: string | null;
   currency: string | null;
   convertedBalance?: number; // Balance converted to default currency for totals
@@ -29,51 +36,43 @@ interface Account {
 interface AccountsClientProps {
   accounts: Account[];
   defaultCurrency: string;
+  monthlyIncome: number;
+  monthlyExpenses: number;
+  netCashFlow: number;
 }
 
 const accountTypeIcons = {
   checking: Wallet,
   savings: PiggyBank,
-  credit: CreditCard,
 };
 
 const accountTypeColors = {
   checking:
     "bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20",
   savings: "bg-chart-2/10 text-chart-2 hover:bg-chart-2/20",
-  credit: "bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-500/20",
 };
 
 export default function AccountsClient({
   accounts,
   defaultCurrency,
+  monthlyIncome,
+  monthlyExpenses,
+  netCashFlow,
 }: AccountsClientProps) {
   const t = useTranslations();
 
   // Calculate assets (checking + savings) using converted balances
-  const assets = accounts
-    .filter(
-      (account) => account.type === "checking" || account.type === "savings",
-    )
-    .reduce((sum, account) => {
-      const balance =
-        account.convertedBalance ?? Number.parseFloat(account.balance || "0");
-      return sum + balance;
-    }, 0);
+  const assets = accounts.reduce((sum, account) => {
+    const balance =
+      account.convertedBalance ?? Number.parseFloat(account.balance || "0");
+    return sum + balance;
+  }, 0);
 
-  const debts = accounts
-    .filter((account) => account.type === "credit")
-    .reduce((sum, account) => {
-      const balance =
-        account.convertedBalance ?? Number.parseFloat(account.balance || "0");
-      return sum + balance;
-    }, 0);
-
-  const netWorth = assets - debts;
+  const isPositiveCashFlow = netCashFlow >= 0;
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border-2">
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
@@ -89,11 +88,11 @@ export default function AccountsClient({
         <Card className="border-2">
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              {t("accounts.debts")}
+              <ArrowUpCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+              {t("accounts.monthlyIncome")}
             </CardDescription>
-            <CardTitle className="font-bold text-4xl">
-              {formatCurrency(debts, defaultCurrency)}
+            <CardTitle className="font-bold text-4xl text-green-600 dark:text-green-400">
+              {formatCurrency(monthlyIncome, defaultCurrency)}
             </CardTitle>
           </CardHeader>
         </Card>
@@ -101,19 +100,45 @@ export default function AccountsClient({
         <Card className="border-2">
           <CardHeader>
             <CardDescription className="flex items-center gap-2">
-              <Landmark className="h-4 w-4" />
-              {t("accounts.netWorth")}
+              <ArrowDownCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+              {t("accounts.monthlyExpenses")}
+            </CardDescription>
+            <CardTitle className="font-bold text-4xl text-red-600 dark:text-red-400">
+              {formatCurrency(monthlyExpenses, defaultCurrency)}
+            </CardTitle>
+          </CardHeader>
+        </Card>
+
+        <Card className="border-2">
+          <CardHeader>
+            <CardDescription className="flex items-center gap-2">
+              <TrendingUp
+                className={`h-4 w-4 ${
+                  isPositiveCashFlow
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-red-600 dark:text-red-400"
+                }`}
+              />
+              {t("accounts.netCashFlow")}
               <Tooltip>
                 <TooltipTrigger asChild={true}>
                   <Info className="h-4 w-4 cursor-help text-muted-foreground" />
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                  <p className="text-wrap">{t("accounts.netWorthTooltip")}</p>
+                  <p className="text-wrap">
+                    {t("accounts.netCashFlowTooltip")}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </CardDescription>
-            <CardTitle className="font-bold text-4xl">
-              {formatCurrency(netWorth, defaultCurrency)}
+            <CardTitle
+              className={`font-bold text-4xl ${
+                isPositiveCashFlow
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
+            >
+              {formatCurrency(netCashFlow, defaultCurrency)}
             </CardTitle>
           </CardHeader>
         </Card>

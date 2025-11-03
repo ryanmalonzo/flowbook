@@ -9,11 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
-export const accountTypeEnum = pgEnum("account_type", [
-  "checking",
-  "savings",
-  "credit",
-]);
+export const accountTypeEnum = pgEnum("account_type", ["checking", "savings"]);
 
 export const transactionTypeEnum = pgEnum("transaction_type", [
   "income",
