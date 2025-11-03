@@ -38,9 +38,10 @@ const accountTypeIcons = {
 };
 
 const accountTypeColors = {
-  checking: "bg-primary/10 text-primary hover:bg-primary/20",
+  checking:
+    "bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20",
   savings: "bg-chart-2/10 text-chart-2 hover:bg-chart-2/20",
-  credit: "bg-destructive/10 text-destructive hover:bg-destructive/20",
+  credit: "bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-500/20",
 };
 
 export default function AccountsClient({

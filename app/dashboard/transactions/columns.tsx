@@ -209,7 +209,7 @@ export function getColumns(
                     // TODO: Implement delete transaction functionality
                     console.log("Delete transaction:", row.original.id);
                   }}
-                  className="text-destructive"
+                  variant="destructive"
                 >
                   <Trash className="mr-2 h-4 w-4" />
                   {t("actions.delete")}
