@@ -26,6 +26,7 @@ interface TransactionsClientProps {
   transactions: Transaction[];
   accounts: Array<{ id: string; name: string }>;
   categories: Array<{ id: string; name: string }>;
+  currency: string;
 }
 
 interface AmountRange {
@@ -37,6 +38,7 @@ export default function TransactionsClient({
   transactions,
   accounts,
   categories,
+  currency,
 }: TransactionsClientProps) {
   const t = useTranslations("transactions");
 
@@ -100,7 +102,7 @@ export default function TransactionsClient({
     { label: t("type.transfer"), value: "transfer" },
   ];
 
-  const columns = getColumns(t);
+  const columns = getColumns(t, currency);
 
   const toolbar = (
     <DataTableToolbar

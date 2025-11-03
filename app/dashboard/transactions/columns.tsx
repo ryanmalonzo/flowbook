@@ -26,6 +26,7 @@ import type { Transaction } from "./types";
 
 export function getColumns(
   t: ReturnType<typeof useTranslations<"transactions">>,
+  currency: string,
 ): ColumnDef<Transaction>[] {
   return [
     {
@@ -169,7 +170,7 @@ export function getColumns(
 
         return (
           <div className={`whitespace-nowrap font-medium ${colorClass}`}>
-            {formatTransactionAmount(amount, type, "USD")}
+            {formatTransactionAmount(amount, type, currency)}
           </div>
         );
       },

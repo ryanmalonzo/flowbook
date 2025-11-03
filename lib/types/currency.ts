@@ -36,6 +36,12 @@ export type CurrencyCode =
   | "ZAR";
 
 /**
+ * Default currency code used throughout the application
+ * Used as fallback when user currency is not set
+ */
+export const DEFAULT_CURRENCY: CurrencyCode = "USD";
+
+/**
  * Fallback exchange rates (USD base)
  * Used when API fails or rates have expired
  * Last updated: 2025-10-31

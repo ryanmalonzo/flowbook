@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { userSettings } from "@/db/schema/budget";
 import logger from "@/lib/logger";
 import { generateId } from "@/lib/nanoid";
+import { type CurrencyCode, DEFAULT_CURRENCY } from "@/lib/types/currency";
 
 export async function getUserSettings(userId: string) {
   logger.debug({ userId }, "Fetching user settings");
@@ -27,7 +28,7 @@ export async function getUserSettings(userId: string) {
     .values({
       id: generateId(),
       userId,
-      currency: "USD",
+      currency: DEFAULT_CURRENCY,
     })
     .returning();
 
@@ -36,4 +37,14 @@ export async function getUserSettings(userId: string) {
     "Created new user settings",
   );
   return newSettings[0];
+}
+
+/**
+ * Gets the user's currency with fallback to DEFAULT_CURRENCY
+ * @param userId - The user ID
+ * @returns The user's currency code or DEFAULT_CURRENCY if not set
+ */
+export async function getUserCurrency(userId: string): Promise<CurrencyCode> {
+  const settings = await getUserSettings(userId);
+  return (settings.currency || DEFAULT_CURRENCY) as CurrencyCode;
 }

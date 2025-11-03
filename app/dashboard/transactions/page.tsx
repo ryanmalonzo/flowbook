@@ -1,4 +1,5 @@
 import { getRequiredUser } from "@/lib/auth/utils";
+import { getUserCurrency } from "@/lib/queries/settings";
 import { getUserAccounts } from "../accounts/queries";
 import { getUserCategories } from "../categories/queries";
 import { getAllTransactions } from "./queries";
@@ -8,10 +9,11 @@ export default async function TransactionsPage() {
   const user = await getRequiredUser();
 
   // Fetch all data in parallel
-  const [transactions, accounts, categories] = await Promise.all([
+  const [transactions, accounts, categories, currency] = await Promise.all([
     getAllTransactions(user.id),
     getUserAccounts(user.id),
     getUserCategories(user.id),
+    getUserCurrency(user.id),
   ]);
 
   return (
@@ -19,6 +21,7 @@ export default async function TransactionsPage() {
       transactions={transactions}
       accounts={accounts.map((a) => ({ id: a.id, name: a.name }))}
       categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+      currency={currency}
     />
   );
 }
