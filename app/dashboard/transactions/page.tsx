@@ -70,6 +70,7 @@ export default async function TransactionsPage({
     <TransactionsClient
       transactions={transactionsResult.transactions}
       pagination={transactionsResult.pagination}
+      totalUnfiltered={transactionsResult.totalUnfiltered}
       accounts={accounts.map((a) => ({ id: a.id, name: a.name }))}
       categories={categories.map((c) => ({ id: c.id, name: c.name }))}
       initialFilters={filters}

@@ -32,6 +32,7 @@ import type {
 interface TransactionsClientProps {
   transactions: Transaction[];
   pagination: PaginationInfo;
+  totalUnfiltered: number;
   accounts: Array<{ id: string; name: string }>;
   categories: Array<{ id: string; name: string }>;
   initialFilters?: TransactionFilters;
@@ -46,6 +47,7 @@ interface AmountRange {
 export default function TransactionsClient({
   transactions,
   pagination,
+  totalUnfiltered,
   accounts,
   categories,
   initialFilters,
@@ -332,28 +334,28 @@ export default function TransactionsClient({
     />
   );
 
-  if (transactions.length === 0 && !hasFilters) {
-    return (
-      <Card className="border-dashed">
-        <CardHeader className="pt-12 pb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <Wallet className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <CardTitle className="text-2xl">{t("empty.title")}</CardTitle>
-          <CardDescription className="text-base">
-            {t("empty.description")}
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
-
   return (
-    <DataTable
-      columns={columns}
-      data={transactions}
-      toolbar={toolbar}
-      pagination={paginationComponent}
-    />
+    <div className="space-y-4">
+      {toolbar}
+      {totalUnfiltered === 0 ? (
+        <Card className="border-dashed">
+          <CardHeader className="pt-12 pb-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+              <Wallet className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <CardTitle className="text-2xl">{t("empty.title")}</CardTitle>
+            <CardDescription className="text-base">
+              {t("empty.description")}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={transactions}
+          pagination={paginationComponent}
+        />
+      )}
+    </div>
   );
 }

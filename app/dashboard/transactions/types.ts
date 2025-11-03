@@ -44,4 +44,5 @@ export interface PaginationInfo extends PaginationParams {
 export interface GetTransactionsResult {
   transactions: Transaction[];
   pagination: PaginationInfo;
+  totalUnfiltered: number;
 }

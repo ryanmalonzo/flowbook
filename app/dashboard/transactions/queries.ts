@@ -172,7 +172,7 @@ export async function getTransactions(
     .limit(pageSize)
     .offset(offset);
 
-  // Count the total number of results
+  // Count the total number of filtered results
   const totalCountResult = await db
     .select()
     .from(transactions)
@@ -181,8 +181,30 @@ export async function getTransactions(
   const total = totalCountResult.length;
   const totalPages = Math.ceil(total / pageSize);
 
+  // Count total unfiltered transactions (only base conditions, no filters)
+  // This is used to determine if the user has ANY transactions at all,
+  // so we can show the "No transactions yet" empty state only for genuinely new users,
+  // not when filters temporarily exclude all results
+  const baseConditions: SQL[] = [
+    eq(transactions.userId, userId),
+    isNull(transactions.deletedAt),
+  ];
+  const totalUnfilteredResult = await db
+    .select()
+    .from(transactions)
+    .where(and(...baseConditions));
+
+  const totalUnfiltered = totalUnfilteredResult.length;
+
   logger.info(
-    { userId, page, pageSize, total, count: transactionsData.length },
+    {
+      userId,
+      page,
+      pageSize,
+      total,
+      totalUnfiltered,
+      count: transactionsData.length,
+    },
     "Retrieved user transactions",
   );
 
@@ -197,5 +219,6 @@ export async function getTransactions(
       total,
       totalPages,
     },
+    totalUnfiltered,
   };
 }
