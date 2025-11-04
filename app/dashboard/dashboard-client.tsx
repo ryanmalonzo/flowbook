@@ -45,6 +45,11 @@ export default function DashboardClient({ user }: DashboardClientProps) {
         onSuccess: () => {
           router.push("/sign-in");
         },
+        onError: () => {
+          // Even if server-side logout fails, redirect to sign-in
+          // The cookie will be cleared client-side
+          router.push("/sign-in");
+        },
       },
     );
   };
