@@ -24,6 +24,25 @@ interface MetricCardProps {
   className?: string;
 }
 
+const FONT_SIZE_BREAKPOINT_MEDIUM = 15;
+const FONT_SIZE_BREAKPOINT_SMALL = 20;
+const FONT_SIZE_BREAKPOINT_EXTRA_SMALL = 25;
+
+function getDynamicFontSize(formattedValue: string | number): string {
+  const valueLength = String(formattedValue).length;
+
+  if (valueLength < FONT_SIZE_BREAKPOINT_MEDIUM) {
+    return "text-4xl";
+  }
+  if (valueLength <= FONT_SIZE_BREAKPOINT_SMALL) {
+    return "text-3xl";
+  }
+  if (valueLength <= FONT_SIZE_BREAKPOINT_EXTRA_SMALL) {
+    return "text-2xl";
+  }
+  return "text-xl";
+}
+
 export function MetricCard({
   icon: Icon,
   label,
@@ -73,7 +92,8 @@ export function MetricCard({
         </CardDescription>
         <CardTitle
           className={cn(
-            "font-bold text-4xl",
+            "min-w-0 break-words font-bold",
+            getDynamicFontSize(formattedValue),
             valueColorClasses[valueColor] || valueColorClasses.default,
           )}
         >
