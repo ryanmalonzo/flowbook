@@ -13,6 +13,8 @@ interface DataTableToolbarProps {
   searchValue?: string;
   onReset?: () => void;
   showReset?: boolean;
+  translationNamespace: Parameters<typeof useTranslations>[0];
+  searchPlaceholder?: string;
 }
 
 export function DataTableToolbar({
@@ -21,14 +23,16 @@ export function DataTableToolbar({
   searchValue = "",
   onReset,
   showReset = false,
+  translationNamespace,
+  searchPlaceholder,
 }: DataTableToolbarProps) {
-  const t = useTranslations("transactions");
+  const t = useTranslations(translationNamespace);
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
         <Input
-          placeholder={t("filters.search")}
+          placeholder={searchPlaceholder || t("filters.search")}
           value={searchValue}
           onChange={(event) => onSearchChange?.(event.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"

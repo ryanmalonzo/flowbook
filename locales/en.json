@@ -93,6 +93,26 @@
     "empty": {
       "title": "No categories yet",
       "description": "Create categories to organize your transactions"
+    },
+    "columns": {
+      "icon": "Icon",
+      "name": "Name",
+      "color": "Color",
+      "actions": "Actions"
+    },
+    "filters": {
+      "search": "Search categories...",
+      "reset": "Reset"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    },
+    "table": {
+      "noResults": "No results."
     }
   },
   "transactions": {

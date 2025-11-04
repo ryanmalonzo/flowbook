@@ -72,6 +72,67 @@ export default function TransactionsClient({
     setAmountRange(undefined);
   };
 
+  const filteredTransactions = React.useMemo(() => {
+    return transactions.filter((transaction) => {
+      if (
+        searchValue &&
+        !transaction.description
+          ?.toLowerCase()
+          .includes(searchValue.toLowerCase())
+      ) {
+        return false;
+      }
+
+      if (
+        selectedAccounts.size > 0 &&
+        !selectedAccounts.has(transaction.accountId)
+      ) {
+        return false;
+      }
+
+      if (selectedCategories.size > 0) {
+        const categoryId = transaction.categoryId || "uncategorized";
+        if (!selectedCategories.has(categoryId)) {
+          return false;
+        }
+      }
+
+      if (selectedTypes.size > 0 && !selectedTypes.has(transaction.type)) {
+        return false;
+      }
+
+      if (dateRange?.from || dateRange?.to) {
+        const transactionDate = new Date(transaction.date);
+        if (dateRange.from && transactionDate < dateRange.from) {
+          return false;
+        }
+        if (dateRange.to && transactionDate > dateRange.to) {
+          return false;
+        }
+      }
+
+      if (amountRange) {
+        const amount = Number.parseFloat(transaction.amount);
+        if (amountRange.min !== undefined && amount < amountRange.min) {
+          return false;
+        }
+        if (amountRange.max !== undefined && amount > amountRange.max) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [
+    transactions,
+    searchValue,
+    selectedAccounts,
+    selectedCategories,
+    selectedTypes,
+    dateRange,
+    amountRange,
+  ]);
+
   const _handleBulkDelete = () => {
     // TODO: Implement bulk delete functionality
     console.log("Bulk delete not implemented yet");
@@ -106,6 +167,7 @@ export default function TransactionsClient({
       onSearchChange={setSearchValue}
       showReset={hasFilters}
       onReset={handleReset}
+      translationNamespace="transactions"
     >
       <DataTableDateRangeFilter
         dateRange={dateRange}
@@ -154,13 +216,8 @@ export default function TransactionsClient({
       ) : (
         <DataTable
           columns={columns}
-          data={transactions}
-          searchValue={searchValue}
-          selectedAccounts={selectedAccounts}
-          selectedCategories={selectedCategories}
-          selectedTypes={selectedTypes}
-          dateRange={dateRange}
-          amountRange={amountRange}
+          data={filteredTransactions}
+          translationNamespace="transactions"
         />
       )}
     </div>
