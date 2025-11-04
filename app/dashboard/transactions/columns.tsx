@@ -2,9 +2,10 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
-import { DynamicIcon, type IconName } from "lucide-react/dynamic";
+import type { IconName } from "lucide-react/dynamic";
 import type { useTranslations } from "next-intl";
 import { DataTableColumnHeader } from "@/components/shared/data-table/data-table-column-header";
+import { DynamicIconWrapper } from "@/components/shared/dynamic-icon-wrapper";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -117,7 +118,7 @@ export function getColumns(
               color: categoryColor,
             }}
           >
-            <DynamicIcon name={categoryIcon as IconName} size={12} />
+            <DynamicIconWrapper name={categoryIcon as IconName} size={12} />
             {categoryName}
           </Badge>
         );

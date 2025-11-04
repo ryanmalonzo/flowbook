@@ -1,10 +1,10 @@
 "use client";
 
-import { DynamicIcon } from "lucide-react/dynamic";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { DataTable } from "@/components/shared/data-table/data-table";
 import { DataTableToolbar } from "@/components/shared/data-table/data-table-toolbar";
+import { DynamicIconWrapper } from "@/components/shared/dynamic-icon-wrapper";
 import {
   Card,
   CardDescription,
@@ -66,9 +66,10 @@ export default function CategoriesClient({
         <Card className="border-dashed">
           <CardHeader className="pt-12 pb-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <DynamicIcon
+              <DynamicIconWrapper
                 name="tag"
-                className="h-8 w-8 text-muted-foreground"
+                size={32}
+                className="text-muted-foreground"
               />
             </div>
             <CardTitle className="text-2xl">{t("empty.title")}</CardTitle>
