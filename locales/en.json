@@ -86,6 +86,32 @@
     "empty": {
       "title": "No accounts yet",
       "description": "You don't have any financial accounts set up. Add your first account to start tracking your finances."
+    },
+    "columns": {
+      "icon": "Icon",
+      "name": "Name",
+      "type": "Type",
+      "balance": "Balance",
+      "currency": "Currency",
+      "actions": "Actions"
+    },
+    "filters": {
+      "search": "Search accounts...",
+      "reset": "Reset"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete",
+      "selectAll": "Select all",
+      "selectRow": "Select row"
+    },
+    "table": {
+      "noResults": "No results."
+    },
+    "view": {
+      "cards": "Cards view",
+      "table": "Table view"
     }
   },
   "categories": {

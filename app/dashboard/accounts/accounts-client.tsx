@@ -3,14 +3,20 @@
 import {
   ArrowDownCircle,
   ArrowUpCircle,
+  LayoutGrid,
   PiggyBank,
+  Table2,
   TrendingUp,
   Wallet,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import * as React from "react";
+import { DataTable } from "@/components/shared/data-table/data-table";
+import { DataTableToolbar } from "@/components/shared/data-table/data-table-toolbar";
 import { EntityCard } from "@/components/shared/entity-card";
 import { MetricCard } from "@/components/shared/metric-card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -18,6 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
+import { getColumns } from "./columns";
 
 interface Account {
   id: string;
@@ -54,7 +61,9 @@ export default function AccountsClient({
   monthlyExpenses,
   netCashFlow,
 }: AccountsClientProps) {
-  const t = useTranslations();
+  const t = useTranslations("accounts");
+  const [viewMode, setViewMode] = React.useState<"cards" | "table">("cards");
+  const [searchValue, setSearchValue] = React.useState("");
 
   // Calculate assets (checking + savings) using converted balances
   const assets = accounts.reduce((sum, account) => {
@@ -65,19 +74,39 @@ export default function AccountsClient({
 
   const isPositiveCashFlow = netCashFlow >= 0;
 
+  const hasFilters = Boolean(searchValue);
+
+  const handleReset = () => {
+    setSearchValue("");
+  };
+
+  const filteredAccounts = React.useMemo(() => {
+    return accounts.filter((account) => {
+      if (
+        searchValue &&
+        !account.name.toLowerCase().includes(searchValue.toLowerCase())
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [accounts, searchValue]);
+
+  const columns = getColumns(t);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           icon={PiggyBank}
-          label={t("accounts.assets")}
+          label={t("assets")}
           value={assets}
           currency={defaultCurrency}
         />
 
         <MetricCard
           icon={ArrowUpCircle}
-          label={t("accounts.monthlyIncome")}
+          label={t("monthlyIncome")}
           value={monthlyIncome}
           currency={defaultCurrency}
           valueColor="green"
@@ -85,7 +114,7 @@ export default function AccountsClient({
 
         <MetricCard
           icon={ArrowDownCircle}
-          label={t("accounts.monthlyExpenses")}
+          label={t("monthlyExpenses")}
           value={monthlyExpenses}
           currency={defaultCurrency}
           valueColor="red"
@@ -93,11 +122,11 @@ export default function AccountsClient({
 
         <MetricCard
           icon={TrendingUp}
-          label={t("accounts.netCashFlow")}
+          label={t("netCashFlow")}
           value={netCashFlow}
           currency={defaultCurrency}
           valueColor={isPositiveCashFlow ? "green" : "red"}
-          tooltip={t("accounts.netCashFlowTooltip")}
+          tooltip={t("netCashFlowTooltip")}
         />
       </div>
 
@@ -107,42 +136,78 @@ export default function AccountsClient({
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
               <Wallet className="h-8 w-8 text-muted-foreground" />
             </div>
-            <CardTitle className="text-2xl">
-              {t("accounts.empty.title")}
-            </CardTitle>
+            <CardTitle className="text-2xl">{t("empty.title")}</CardTitle>
             <CardDescription className="text-base">
-              {t("accounts.empty.description")}
+              {t("empty.description")}
             </CardDescription>
           </CardHeader>
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {accounts.map((account) => {
-            const Icon = accountTypeIcons[account.type];
-            const balance = Number.parseFloat(account.balance || "0");
-            const currency = account.currency || "USD";
+        <div className="space-y-4">
+          <div className="flex gap-1">
+            <Button
+              variant={viewMode === "cards" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("cards")}
+              title={t("view.cards")}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === "table" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+              title={t("view.table")}
+            >
+              <Table2 className="h-4 w-4" />
+            </Button>
+          </div>
 
-            return (
-              <EntityCard
-                key={account.id}
-                icon={Icon}
-                title={account.name}
-                badge={
-                  <Badge
-                    variant="secondary"
-                    className={accountTypeColors[account.type]}
-                  >
-                    {t(`accounts.accountType.${account.type}`)}
-                  </Badge>
-                }
-                contentLabel={t("accounts.balance")}
-                contentValue={balance}
-                contentFormatter={(value) =>
-                  formatCurrency(Number(value), currency)
-                }
+          {viewMode === "cards" ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {accounts.map((account) => {
+                const Icon = accountTypeIcons[account.type];
+                const balance = Number.parseFloat(account.balance || "0");
+                const currency = account.currency || "USD";
+
+                return (
+                  <EntityCard
+                    key={account.id}
+                    icon={Icon}
+                    title={account.name}
+                    badge={
+                      <Badge
+                        variant="secondary"
+                        className={accountTypeColors[account.type]}
+                      >
+                        {t(`accountType.${account.type}`)}
+                      </Badge>
+                    }
+                    contentLabel={t("balance")}
+                    contentValue={balance}
+                    contentFormatter={(value) =>
+                      formatCurrency(Number(value), currency)
+                    }
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <>
+              <DataTableToolbar
+                searchValue={searchValue}
+                onSearchChange={setSearchValue}
+                showReset={hasFilters}
+                onReset={handleReset}
+                translationNamespace="accounts"
               />
-            );
-          })}
+              <DataTable
+                columns={columns}
+                data={filteredAccounts}
+                translationNamespace="accounts"
+              />
+            </>
+          )}
         </div>
       )}
     </div>
