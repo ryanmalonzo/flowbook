@@ -174,9 +174,6 @@
       "expense": "Expense",
       "transfer": "Transfer"
     },
-    "category": {
-      "uncategorized": "Uncategorized"
-    },
     "actions": {
       "openMenu": "Open menu",
       "edit": "Edit",

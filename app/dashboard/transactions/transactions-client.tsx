@@ -49,6 +49,9 @@ export default function TransactionsClient({
   const [selectedTypes, setSelectedTypes] = React.useState<Set<string>>(
     new Set(),
   );
+  const [selectedVendors, setSelectedVendors] = React.useState<Set<string>>(
+    new Set(),
+  );
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
   const [amountRange, setAmountRange] = React.useState<
     AmountRange | undefined
@@ -59,6 +62,7 @@ export default function TransactionsClient({
       selectedAccounts.size > 0 ||
       selectedCategories.size > 0 ||
       selectedTypes.size > 0 ||
+      selectedVendors.size > 0 ||
       dateRange?.from ||
       amountRange,
   );
@@ -68,6 +72,7 @@ export default function TransactionsClient({
     setSelectedAccounts(new Set());
     setSelectedCategories(new Set());
     setSelectedTypes(new Set());
+    setSelectedVendors(new Set());
     setDateRange(undefined);
     setAmountRange(undefined);
   };
@@ -101,6 +106,13 @@ export default function TransactionsClient({
         return false;
       }
 
+      if (selectedVendors.size > 0) {
+        const vendor = transaction.vendor || "no-vendor";
+        if (!selectedVendors.has(vendor)) {
+          return false;
+        }
+      }
+
       if (dateRange?.from || dateRange?.to) {
         const transactionDate = new Date(transaction.date);
         if (dateRange.from && transactionDate < dateRange.from) {
@@ -129,6 +141,7 @@ export default function TransactionsClient({
     selectedAccounts,
     selectedCategories,
     selectedTypes,
+    selectedVendors,
     dateRange,
     amountRange,
   ]);
@@ -159,6 +172,28 @@ export default function TransactionsClient({
     { label: t("type.transfer"), value: "transfer" },
   ];
 
+  const vendorOptions = React.useMemo(() => {
+    const uniqueVendors = new Set<string>();
+    for (const transaction of transactions) {
+      if (transaction.vendor) {
+        uniqueVendors.add(transaction.vendor);
+      }
+    }
+    const options = Array.from(uniqueVendors)
+      .sort()
+      .map((vendor) => ({
+        label: vendor,
+        value: vendor,
+      }));
+
+    const hasNoVendor = transactions.some((t) => !t.vendor);
+    if (hasNoVendor) {
+      options.push({ label: "No vendor", value: "no-vendor" });
+    }
+
+    return options;
+  }, [transactions]);
+
   const columns = getColumns(t, currency);
 
   const toolbar = (
@@ -174,10 +209,10 @@ export default function TransactionsClient({
         onDateRangeChange={setDateRange}
       />
       <DataTableFacetedFilter
-        title="Account"
-        options={accountOptions}
-        selectedValues={selectedAccounts}
-        onSelectedChange={setSelectedAccounts}
+        title="Type"
+        options={typeOptions}
+        selectedValues={selectedTypes}
+        onSelectedChange={setSelectedTypes}
       />
       <DataTableFacetedFilter
         title="Category"
@@ -186,10 +221,16 @@ export default function TransactionsClient({
         onSelectedChange={setSelectedCategories}
       />
       <DataTableFacetedFilter
-        title="Type"
-        options={typeOptions}
-        selectedValues={selectedTypes}
-        onSelectedChange={setSelectedTypes}
+        title="Vendor"
+        options={vendorOptions}
+        selectedValues={selectedVendors}
+        onSelectedChange={setSelectedVendors}
+      />
+      <DataTableFacetedFilter
+        title="Account"
+        options={accountOptions}
+        selectedValues={selectedAccounts}
+        onSelectedChange={setSelectedAccounts}
       />
       <DataTableAmountRangeFilter
         amountRange={amountRange}

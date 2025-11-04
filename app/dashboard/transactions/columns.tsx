@@ -92,6 +92,60 @@ export function getColumns(
       },
     },
     {
+      accessorKey: "amount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Amount" />
+      ),
+      cell: ({ row }) => {
+        const amount = Number.parseFloat(row.getValue("amount"));
+        const type = row.getValue("type") as "income" | "expense" | "transfer";
+
+        const colorClass =
+          type === "income"
+            ? "text-green-600 dark:text-green-400"
+            : type === "expense"
+              ? "text-red-600 dark:text-red-400"
+              : "text-blue-600 dark:text-blue-400";
+
+        return (
+          <div className={`whitespace-nowrap font-medium ${colorClass}`}>
+            {formatTransactionAmount(amount, type, currency)}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Type" />
+      ),
+      cell: ({ row }) => {
+        const type = row.getValue("type") as "income" | "expense" | "transfer";
+        return (
+          <Badge variant="secondary" className={getTransactionTypeColor(type)}>
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Badge>
+        );
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue(id));
+      },
+    },
+    {
+      accessorKey: "vendor",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Vendor" />
+      ),
+      cell: ({ row }) => {
+        const vendor = row.getValue("vendor") as string | null;
+        return vendor ? (
+          <div className="whitespace-nowrap">{vendor}</div>
+        ) : (
+          <span className="text-muted-foreground text-sm">—</span>
+        );
+      },
+    },
+    {
       accessorKey: "categoryName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Category" />
@@ -102,11 +156,7 @@ export function getColumns(
         const categoryColor = row.original.categoryColor || "#6b7280";
 
         if (!categoryName) {
-          return (
-            <span className="text-muted-foreground text-sm">
-              {t("category.uncategorized")}
-            </span>
-          );
+          return <span className="text-muted-foreground text-sm">—</span>;
         }
 
         return (
@@ -132,46 +182,6 @@ export function getColumns(
       cell: ({ row }) => {
         return (
           <div className="whitespace-nowrap">{row.getValue("accountName")}</div>
-        );
-      },
-    },
-    {
-      accessorKey: "type",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Type" />
-      ),
-      cell: ({ row }) => {
-        const type = row.getValue("type") as "income" | "expense" | "transfer";
-        return (
-          <Badge variant="secondary" className={getTransactionTypeColor(type)}>
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-          </Badge>
-        );
-      },
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id));
-      },
-    },
-    {
-      accessorKey: "amount",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Amount" />
-      ),
-      cell: ({ row }) => {
-        const amount = Number.parseFloat(row.getValue("amount"));
-        const type = row.getValue("type") as "income" | "expense" | "transfer";
-
-        const colorClass =
-          type === "income"
-            ? "text-green-600 dark:text-green-400"
-            : type === "expense"
-              ? "text-red-600 dark:text-red-400"
-              : "text-blue-600 dark:text-blue-400";
-
-        return (
-          <div className={`whitespace-nowrap font-medium ${colorClass}`}>
-            {formatTransactionAmount(amount, type, currency)}
-          </div>
         );
       },
     },

@@ -128,6 +128,7 @@ export const transactions = pgTable(
     }),
     amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
     description: text("description").notNull(),
+    vendor: text("vendor"),
     date: timestamp("date").notNull(),
     type: transactionTypeEnum("type").notNull(),
     deletedAt: timestamp("deleted_at"),

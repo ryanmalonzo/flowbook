@@ -71,6 +71,13 @@
       "when": 1762213137693,
       "tag": "0009_colossal_hardball",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1762271644566,
+      "tag": "0010_bouncy_mac_gargan",
+      "breakpoints": true
     }
   ]
 }

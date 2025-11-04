@@ -152,6 +152,37 @@ const ACCOUNT_NAME_PREFIXES = [
   "Secondary",
 ];
 
+const VENDOR_NAMES = [
+  "Amazon",
+  "Walmart",
+  "Target",
+  "Starbucks",
+  "Shell",
+  "Costco",
+  "Apple Store",
+  "Best Buy",
+  "Home Depot",
+  "CVS",
+  "Walgreens",
+  "McDonald's",
+  "Whole Foods",
+  "Trader Joe's",
+  "Chipotle",
+  "Netflix",
+  "Spotify",
+  "Adobe",
+  "Microsoft",
+  "Google",
+  "Uber",
+  "Lyft",
+  "Airbnb",
+  "Delta Airlines",
+  "Hilton",
+  "Marriott",
+];
+
+const SEED_VENDOR_ASSIGNMENT_PROBABILITY = 0.8;
+
 const CURRENCY_CODES: CurrencyCode[] = [
   "AUD",
   "BGN",
@@ -354,6 +385,7 @@ async function createTransactions(
     categoryId: string | null;
     amount: string;
     description: string;
+    vendor: string | null;
     date: Date;
     type: "income" | "expense" | "transfer";
   }> = [];
@@ -367,6 +399,11 @@ async function createTransactions(
 
     let amount: string;
     let categoryId: string | null = null;
+    let vendor: string | null = null;
+
+    if (Math.random() > SEED_VENDOR_ASSIGNMENT_PROBABILITY) {
+      vendor = pickRandom(VENDOR_NAMES);
+    }
 
     if (type === "income") {
       amount = faker.finance.amount({
@@ -405,6 +442,7 @@ async function createTransactions(
       categoryId,
       amount,
       description,
+      vendor,
       date,
       type,
     });

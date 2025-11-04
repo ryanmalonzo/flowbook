@@ -9,6 +9,7 @@ export interface Transaction {
   categoryIcon: string | null;
   amount: string;
   description: string;
+  vendor: string | null;
   date: Date;
   type: "income" | "expense" | "transfer";
   createdAt: Date;
