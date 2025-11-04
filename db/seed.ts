@@ -51,7 +51,6 @@ const CATEGORY_NAMES = [
 const CATEGORY_ICONS = [
   "tag",
   "shopping-cart",
-  "food",
   "home",
   "car",
   "heart",
