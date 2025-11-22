@@ -48,6 +48,7 @@ export function DataTable<TData, TValue>({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const prevDataLengthRef = React.useRef(data.length);
 
   const table = useReactTable({
     data,
@@ -72,13 +73,35 @@ export function DataTable<TData, TValue>({
   });
 
   React.useEffect(() => {
-    if (onRowSelectionChange) {
+    if (onRowSelectionChange && Object.keys(rowSelection).length >= 0) {
       const selectedRows = table
         .getFilteredSelectedRowModel()
         .rows.map((row) => row.original);
       onRowSelectionChange(selectedRows);
     }
-  }, [table, onRowSelectionChange]);
+  }, [rowSelection, table, onRowSelectionChange]);
+
+  React.useEffect(() => {
+    const currentDataLength = data.length;
+    const prevDataLength = prevDataLengthRef.current;
+
+    if (currentDataLength < prevDataLength) {
+      const selectedRowIds = Object.keys(rowSelection);
+      if (selectedRowIds.length > 0) {
+        const currentRowIds = new Set(
+          table.getRowModel().rows.map((row) => row.id),
+        );
+        const hasInvalidSelection = selectedRowIds.some(
+          (id) => !currentRowIds.has(id),
+        );
+        if (hasInvalidSelection) {
+          setRowSelection({});
+        }
+      }
+    }
+
+    prevDataLengthRef.current = currentDataLength;
+  }, [data, rowSelection, table]);
 
   return (
     <div className="space-y-4">
