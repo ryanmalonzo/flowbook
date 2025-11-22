@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { deleteCategory } from "./actions";
+import { bulkDeleteCategories, deleteCategory } from "./actions";
 import { getColumns } from "./columns";
 import { EditCategoryModal } from "./edit-category-modal";
 
@@ -41,6 +41,12 @@ export default function CategoriesClient({
     React.useState<Category | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [selectedCategories, setSelectedCategories] = React.useState<
+    Category[]
+  >([]);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] =
+    React.useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = React.useState(false);
 
   const hasFilters = Boolean(searchValue);
 
@@ -88,6 +94,32 @@ export default function CategoriesClient({
     }
   };
 
+  const handleBulkDelete = () => {
+    if (selectedCategories.length === 0) {
+      return;
+    }
+    setIsBulkDeleteModalOpen(true);
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedCategories.length === 0) {
+      return;
+    }
+
+    setIsBulkDeleting(true);
+    const categoryIds = selectedCategories.map((category) => category.id);
+    const result = await bulkDeleteCategories(categoryIds);
+    setIsBulkDeleting(false);
+
+    if (result.success) {
+      toast.success(t("bulkDelete.success", { count: result.deletedCount }));
+      setIsBulkDeleteModalOpen(false);
+      setSelectedCategories([]);
+    } else {
+      toast.error(result.errors[0] || t("bulkDelete.error"));
+    }
+  };
+
   const columns = getColumns(t, handleEdit, handleDelete);
 
   const toolbar = (
@@ -97,6 +129,10 @@ export default function CategoriesClient({
       showReset={hasFilters}
       onReset={handleReset}
       translationNamespace="categories"
+      selectedCount={selectedCategories.length}
+      onBulkDelete={
+        selectedCategories.length > 0 ? handleBulkDelete : undefined
+      }
     />
   );
 
@@ -125,6 +161,7 @@ export default function CategoriesClient({
             columns={columns}
             data={filteredCategories}
             translationNamespace="categories"
+            onRowSelectionChange={setSelectedCategories}
           />
         </>
       )}
@@ -141,6 +178,15 @@ export default function CategoriesClient({
         itemName={deletingCategory?.name || ""}
         onConfirm={handleConfirmDelete}
         isDeleting={isDeleting}
+      />
+      <DeleteConfirmationDialog
+        open={isBulkDeleteModalOpen}
+        onOpenChange={setIsBulkDeleteModalOpen}
+        title={t("bulkDelete.title")}
+        description={t("bulkDelete.description")}
+        itemCount={selectedCategories.length}
+        onConfirm={handleConfirmBulkDelete}
+        isDeleting={isBulkDeleting}
       />
     </div>
   );

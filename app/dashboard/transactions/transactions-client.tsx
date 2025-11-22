@@ -17,7 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { deleteTransaction } from "./actions";
+import { bulkDeleteTransactions, deleteTransaction } from "./actions";
 import { getColumns } from "./columns";
 import { EditTransactionModal } from "./edit-transaction-modal";
 import type { Transaction } from "./types";
@@ -78,6 +78,12 @@ export default function TransactionsClient({
     React.useState<Transaction | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [selectedTransactions, setSelectedTransactions] = React.useState<
+    Transaction[]
+  >([]);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] =
+    React.useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = React.useState(false);
 
   const hasFilters = Boolean(
     searchValue ||
@@ -168,9 +174,32 @@ export default function TransactionsClient({
     amountRange,
   ]);
 
-  const _handleBulkDelete = () => {
-    // TODO: Implement bulk delete functionality
-    console.log("Bulk delete not implemented yet");
+  const handleBulkDelete = () => {
+    if (selectedTransactions.length === 0) {
+      return;
+    }
+    setIsBulkDeleteModalOpen(true);
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedTransactions.length === 0) {
+      return;
+    }
+
+    setIsBulkDeleting(true);
+    const transactionIds = selectedTransactions.map(
+      (transaction) => transaction.id,
+    );
+    const result = await bulkDeleteTransactions(transactionIds);
+    setIsBulkDeleting(false);
+
+    if (result.success) {
+      toast.success(t("bulkDelete.success", { count: result.deletedCount }));
+      setIsBulkDeleteModalOpen(false);
+      setSelectedTransactions([]);
+    } else {
+      toast.error(result.errors[0] || t("bulkDelete.error"));
+    }
   };
 
   const _handleExportCSV = () => {
@@ -253,6 +282,10 @@ export default function TransactionsClient({
       showReset={hasFilters}
       onReset={handleReset}
       translationNamespace="transactions"
+      selectedCount={selectedTransactions.length}
+      onBulkDelete={
+        selectedTransactions.length > 0 ? handleBulkDelete : undefined
+      }
     >
       <DataTableDateRangeFilter
         dateRange={dateRange}
@@ -309,6 +342,7 @@ export default function TransactionsClient({
           columns={columns}
           data={filteredTransactions}
           translationNamespace="transactions"
+          onRowSelectionChange={setSelectedTransactions}
         />
       )}
       <EditTransactionModal
@@ -326,6 +360,15 @@ export default function TransactionsClient({
         itemName={deletingTransaction?.description || ""}
         onConfirm={handleConfirmDelete}
         isDeleting={isDeleting}
+      />
+      <DeleteConfirmationDialog
+        open={isBulkDeleteModalOpen}
+        onOpenChange={setIsBulkDeleteModalOpen}
+        title={t("bulkDelete.title")}
+        description={t("bulkDelete.description")}
+        itemCount={selectedTransactions.length}
+        onConfirm={handleConfirmBulkDelete}
+        isDeleting={isBulkDeleting}
       />
     </div>
   );

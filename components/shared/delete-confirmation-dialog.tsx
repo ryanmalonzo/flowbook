@@ -10,7 +10,8 @@ interface DeleteConfirmationDialogProps {
   onOpenChange: (open: boolean) => void;
   title: string;
   description: string;
-  itemName: string;
+  itemName?: string;
+  itemCount?: number;
   onConfirm: () => void | Promise<void>;
   isDeleting: boolean;
 }
@@ -21,6 +22,7 @@ export function DeleteConfirmationDialog({
   title,
   description,
   itemName,
+  itemCount,
   onConfirm,
   isDeleting,
 }: DeleteConfirmationDialogProps) {
@@ -29,6 +31,8 @@ export function DeleteConfirmationDialog({
   const handleConfirm = async () => {
     await onConfirm();
   };
+
+  const isBulkDelete = itemCount !== undefined && itemCount > 1;
 
   return (
     <ActionDialog
@@ -56,9 +60,19 @@ export function DeleteConfirmationDialog({
         </Button>
       }
     >
-      <div className="rounded-md bg-muted p-3">
-        <p className="font-medium text-sm">{itemName}</p>
-      </div>
+      {isBulkDelete ? (
+        <div className="rounded-md bg-muted p-3">
+          <p className="font-medium text-sm">
+            {itemCount} {itemCount === 1 ? "item" : "items"} selected
+          </p>
+        </div>
+      ) : (
+        itemName && (
+          <div className="rounded-md bg-muted p-3">
+            <p className="font-medium text-sm">{itemName}</p>
+          </div>
+        )
+      )}
     </ActionDialog>
   );
 }

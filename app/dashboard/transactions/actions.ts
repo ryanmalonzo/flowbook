@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
@@ -164,6 +164,104 @@ export async function deleteTransaction(
     return {
       success: false,
       error: "Failed to delete transaction",
+    };
+  }
+}
+
+interface BulkDeleteTransactionsResult {
+  success: boolean;
+  deletedCount: number;
+  failedCount: number;
+  errors: string[];
+}
+
+export async function bulkDeleteTransactions(
+  transactionIds: string[],
+): Promise<BulkDeleteTransactionsResult> {
+  try {
+    const user = await getRequiredUser();
+    logger.debug(
+      { userId: user.id, transactionIds, count: transactionIds.length },
+      "Bulk deleting transactions",
+    );
+
+    if (transactionIds.length === 0) {
+      return {
+        success: true,
+        deletedCount: 0,
+        failedCount: 0,
+        errors: [],
+      };
+    }
+
+    const existingTransactions = await db
+      .select()
+      .from(transactions)
+      .where(
+        and(
+          inArray(transactions.id, transactionIds),
+          eq(transactions.userId, user.id),
+          isNull(transactions.deletedAt),
+        ),
+      );
+
+    if (existingTransactions.length === 0) {
+      logger.warn(
+        { userId: user.id, transactionIds },
+        "No valid transactions found for bulk delete",
+      );
+      return {
+        success: false,
+        deletedCount: 0,
+        failedCount: transactionIds.length,
+        errors: ["No valid transactions found"],
+      };
+    }
+
+    const validTransactionIds = existingTransactions.map(
+      (transaction) => transaction.id,
+    );
+
+    await db
+      .update(transactions)
+      .set({
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          inArray(transactions.id, validTransactionIds),
+          eq(transactions.userId, user.id),
+        ),
+      );
+
+    const deletedCount = validTransactionIds.length;
+
+    logger.info(
+      {
+        userId: user.id,
+        deletedCount,
+        transactionIds: validTransactionIds,
+      },
+      "Bulk delete transactions completed",
+    );
+
+    revalidatePath("/dashboard/transactions");
+    revalidatePath("/dashboard/accounts");
+
+    return {
+      success: true,
+      deletedCount,
+      failedCount: transactionIds.length - deletedCount,
+      errors: [],
+    };
+  } catch (error) {
+    logger.error({ error }, "Failed to bulk delete transactions");
+    return {
+      success: false,
+      deletedCount: 0,
+      failedCount: transactionIds.length,
+      errors: ["Failed to delete transactions"],
     };
   }
 }

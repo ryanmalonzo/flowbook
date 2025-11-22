@@ -31,12 +31,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   translationNamespace: Parameters<typeof useTranslations>[0];
+  onRowSelectionChange?: (selectedRows: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   translationNamespace,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const t = useTranslations(translationNamespace);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -68,6 +70,15 @@ export function DataTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+
+  React.useEffect(() => {
+    if (onRowSelectionChange) {
+      const selectedRows = table
+        .getFilteredSelectedRowModel()
+        .rows.map((row) => row.original);
+      onRowSelectionChange(selectedRows);
+    }
+  }, [table, onRowSelectionChange]);
 
   return (
     <div className="space-y-4">

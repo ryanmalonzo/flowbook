@@ -97,7 +97,8 @@
     },
     "filters": {
       "search": "Search accounts...",
-      "reset": "Reset"
+      "reset": "Reset",
+      "selected": "selected"
     },
     "actions": {
       "openMenu": "Open menu",
@@ -140,6 +141,17 @@
       "success": "Account deleted successfully",
       "error": "Failed to delete account",
       "hasTransactions": "Cannot delete account with existing transactions"
+    },
+    "bulkActions": {
+      "deleteSelected": "Delete selected"
+    },
+    "bulkDelete": {
+      "title": "Delete Accounts",
+      "description": "Are you sure you want to delete the selected accounts?",
+      "success": "{count} account(s) deleted successfully",
+      "partialSuccess": "{deleted} account(s) deleted, {failed} could not be deleted",
+      "error": "Failed to delete accounts",
+      "hasTransactions": "Some accounts could not be deleted because they have existing transactions"
     }
   },
   "categories": {
@@ -156,7 +168,8 @@
     },
     "filters": {
       "search": "Search categories...",
-      "reset": "Reset"
+      "reset": "Reset",
+      "selected": "selected"
     },
     "actions": {
       "openMenu": "Open menu",
@@ -194,6 +207,15 @@
       "cancel": "Cancel",
       "success": "Category deleted successfully",
       "error": "Failed to delete category"
+    },
+    "bulkActions": {
+      "deleteSelected": "Delete selected"
+    },
+    "bulkDelete": {
+      "title": "Delete Categories",
+      "description": "Are you sure you want to delete the selected categories?",
+      "success": "{count} category(ies) deleted successfully",
+      "error": "Failed to delete categories"
     }
   },
   "transactions": {
@@ -300,6 +322,12 @@
       "cancel": "Cancel",
       "success": "Transaction deleted successfully",
       "error": "Failed to delete transaction"
+    },
+    "bulkDelete": {
+      "title": "Delete Transactions",
+      "description": "Are you sure you want to delete the selected transactions?",
+      "success": "{count} transaction(s) deleted successfully",
+      "error": "Failed to delete transactions"
     }
   },
   "betterAuth": {

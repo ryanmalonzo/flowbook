@@ -37,7 +37,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/utils";
-import { deleteAccount } from "./actions";
+import { bulkDeleteAccounts, deleteAccount } from "./actions";
 import { getColumns } from "./columns";
 import { EditAccountModal } from "./edit-account-modal";
 
@@ -88,6 +88,10 @@ export default function AccountsClient({
   );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [selectedAccounts, setSelectedAccounts] = React.useState<Account[]>([]);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] =
+    React.useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = React.useState(false);
 
   // Calculate assets (checking + savings) using converted balances
   const assets = accounts.reduce((sum, account) => {
@@ -141,6 +145,44 @@ export default function AccountsClient({
       setDeletingAccount(null);
     } else {
       toast.error(result.error || t("delete.error"));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedAccounts.length === 0) {
+      return;
+    }
+    setIsBulkDeleteModalOpen(true);
+  };
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedAccounts.length === 0) {
+      return;
+    }
+
+    setIsBulkDeleting(true);
+    const accountIds = selectedAccounts.map((account) => account.id);
+    const result = await bulkDeleteAccounts(accountIds);
+    setIsBulkDeleting(false);
+
+    if (result.success) {
+      if (result.failedCount > 0) {
+        toast.warning(
+          t("bulkDelete.partialSuccess", {
+            deleted: result.deletedCount,
+            failed: result.failedCount,
+          }),
+        );
+        if (result.errors.length > 0) {
+          toast.error(result.errors[0]);
+        }
+      } else {
+        toast.success(t("bulkDelete.success", { count: result.deletedCount }));
+      }
+      setIsBulkDeleteModalOpen(false);
+      setSelectedAccounts([]);
+    } else {
+      toast.error(result.errors[0] || t("bulkDelete.error"));
     }
   };
 
@@ -291,11 +333,16 @@ export default function AccountsClient({
                 showReset={hasFilters}
                 onReset={handleReset}
                 translationNamespace="accounts"
+                selectedCount={selectedAccounts.length}
+                onBulkDelete={
+                  selectedAccounts.length > 0 ? handleBulkDelete : undefined
+                }
               />
               <DataTable
                 columns={columns}
                 data={filteredAccounts}
                 translationNamespace="accounts"
+                onRowSelectionChange={setSelectedAccounts}
               />
             </>
           )}
@@ -314,6 +361,15 @@ export default function AccountsClient({
         itemName={deletingAccount?.name || ""}
         onConfirm={handleConfirmDelete}
         isDeleting={isDeleting}
+      />
+      <DeleteConfirmationDialog
+        open={isBulkDeleteModalOpen}
+        onOpenChange={setIsBulkDeleteModalOpen}
+        title={t("bulkDelete.title")}
+        description={t("bulkDelete.description")}
+        itemCount={selectedAccounts.length}
+        onConfirm={handleConfirmBulkDelete}
+        isDeleting={isBulkDeleting}
       />
     </div>
   );

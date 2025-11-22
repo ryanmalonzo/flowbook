@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
@@ -165,6 +165,141 @@ export async function deleteAccount(
     return {
       success: false,
       error: "Failed to delete account",
+    };
+  }
+}
+
+interface BulkDeleteAccountsResult {
+  success: boolean;
+  deletedCount: number;
+  failedCount: number;
+  errors: string[];
+}
+
+export async function bulkDeleteAccounts(
+  accountIds: string[],
+): Promise<BulkDeleteAccountsResult> {
+  try {
+    const user = await getRequiredUser();
+    logger.debug(
+      { userId: user.id, accountIds, count: accountIds.length },
+      "Bulk deleting accounts",
+    );
+
+    if (accountIds.length === 0) {
+      return {
+        success: true,
+        deletedCount: 0,
+        failedCount: 0,
+        errors: [],
+      };
+    }
+
+    const existingAccounts = await db
+      .select()
+      .from(financialAccounts)
+      .where(
+        and(
+          inArray(financialAccounts.id, accountIds),
+          eq(financialAccounts.userId, user.id),
+          isNull(financialAccounts.deletedAt),
+        ),
+      );
+
+    if (existingAccounts.length === 0) {
+      logger.warn(
+        { userId: user.id, accountIds },
+        "No valid accounts found for bulk delete",
+      );
+      return {
+        success: false,
+        deletedCount: 0,
+        failedCount: accountIds.length,
+        errors: ["No valid accounts found"],
+      };
+    }
+
+    const validAccountIds = existingAccounts.map((account) => account.id);
+
+    const accountsWithTransactions = await db
+      .select({ accountId: transactions.accountId })
+      .from(transactions)
+      .where(
+        and(
+          inArray(transactions.accountId, validAccountIds),
+          eq(transactions.userId, user.id),
+          isNull(transactions.deletedAt),
+        ),
+      )
+      .groupBy(transactions.accountId);
+
+    const accountIdsWithTransactions = new Set(
+      accountsWithTransactions.map((t) => t.accountId),
+    );
+
+    const deletableAccountIds = validAccountIds.filter(
+      (id) => !accountIdsWithTransactions.has(id),
+    );
+
+    if (deletableAccountIds.length === 0) {
+      logger.warn(
+        { userId: user.id, accountIds },
+        "All accounts have existing transactions",
+      );
+      return {
+        success: false,
+        deletedCount: 0,
+        failedCount: validAccountIds.length,
+        errors: ["Cannot delete accounts with existing transactions"],
+      };
+    }
+
+    await db
+      .update(financialAccounts)
+      .set({
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          inArray(financialAccounts.id, deletableAccountIds),
+          eq(financialAccounts.userId, user.id),
+        ),
+      );
+
+    const deletedCount = deletableAccountIds.length;
+    const failedCount = validAccountIds.length - deletedCount;
+
+    logger.info(
+      {
+        userId: user.id,
+        deletedCount,
+        failedCount,
+        accountIds: deletableAccountIds,
+      },
+      "Bulk delete accounts completed",
+    );
+
+    revalidatePath("/dashboard/accounts");
+
+    return {
+      success: true,
+      deletedCount,
+      failedCount,
+      errors:
+        failedCount > 0
+          ? [
+              "Some accounts could not be deleted because they have existing transactions",
+            ]
+          : [],
+    };
+  } catch (error) {
+    logger.error({ error }, "Failed to bulk delete accounts");
+    return {
+      success: false,
+      deletedCount: 0,
+      failedCount: accountIds.length,
+      errors: ["Failed to delete accounts"],
     };
   }
 }
