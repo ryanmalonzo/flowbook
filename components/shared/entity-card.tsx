@@ -13,6 +13,7 @@ interface EntityCardProps {
   contentFormatter?: (value: string | number) => string;
   className?: string;
   onClick?: () => void;
+  actions?: React.ReactNode;
 }
 
 export function EntityCard({
@@ -24,6 +25,7 @@ export function EntityCard({
   contentFormatter,
   className,
   onClick,
+  actions,
 }: EntityCardProps) {
   const formattedContentValue =
     contentValue !== undefined
@@ -48,7 +50,10 @@ export function EntityCard({
               <Icon className="h-5 w-5 text-muted-foreground" />
             </div>
           </div>
-          {badge}
+          <div className="flex items-center gap-2">
+            {badge}
+            {actions}
+          </div>
         </div>
         <CardTitle className="mt-4">{title}</CardTitle>
       </CardHeader>

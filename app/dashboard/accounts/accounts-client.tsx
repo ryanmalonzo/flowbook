@@ -4,8 +4,11 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   LayoutGrid,
+  MoreHorizontal,
+  Pencil,
   PiggyBank,
   Table2,
+  Trash,
   TrendingUp,
   Wallet,
 } from "lucide-react";
@@ -23,6 +26,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/utils";
 import { getColumns } from "./columns";
 import { EditAccountModal } from "./edit-account-modal";
@@ -197,6 +208,46 @@ export default function AccountsClient({
                     contentValue={balance}
                     contentFormatter={(value) =>
                       formatCurrency(Number(value), currency)
+                    }
+                    actions={
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild={true}>
+                          <Button
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <span className="sr-only">
+                              {t("actions.openMenu")}
+                            </span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>
+                            {t("columns.actions")}
+                          </DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => {
+                              handleEdit(account);
+                            }}
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            {t("actions.edit")}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              // TODO: Implement delete account functionality
+                              console.log("Delete account:", account.id);
+                            }}
+                            variant="destructive"
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            {t("actions.delete")}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     }
                   />
                 );
