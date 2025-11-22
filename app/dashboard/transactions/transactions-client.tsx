@@ -4,17 +4,20 @@ import { Wallet } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
+import { toast } from "sonner";
 import { DataTable } from "@/components/shared/data-table/data-table";
 import { DataTableAmountRangeFilter } from "@/components/shared/data-table/data-table-amount-range-filter";
 import { DataTableDateRangeFilter } from "@/components/shared/data-table/data-table-date-range-filter";
 import { DataTableFacetedFilter } from "@/components/shared/data-table/data-table-faceted-filter";
 import { DataTableToolbar } from "@/components/shared/data-table/data-table-toolbar";
+import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { deleteTransaction } from "./actions";
 import { getColumns } from "./columns";
 import { EditTransactionModal } from "./edit-transaction-modal";
 import type { Transaction } from "./types";
@@ -71,6 +74,10 @@ export default function TransactionsClient({
   const [editingTransaction, setEditingTransaction] =
     React.useState<Transaction | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [deletingTransaction, setDeletingTransaction] =
+    React.useState<Transaction | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const hasFilters = Boolean(
     searchValue ||
@@ -214,7 +221,30 @@ export default function TransactionsClient({
     setIsEditModalOpen(true);
   };
 
-  const columns = getColumns(t, currency, handleEdit);
+  const handleDelete = (transaction: Transaction) => {
+    setDeletingTransaction(transaction);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingTransaction) {
+      return;
+    }
+
+    setIsDeleting(true);
+    const result = await deleteTransaction(deletingTransaction.id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      toast.success(t("delete.success"));
+      setIsDeleteModalOpen(false);
+      setDeletingTransaction(null);
+    } else {
+      toast.error(result.error || t("delete.error"));
+    }
+  };
+
+  const columns = getColumns(t, currency, handleEdit, handleDelete);
 
   const toolbar = (
     <DataTableToolbar
@@ -287,6 +317,15 @@ export default function TransactionsClient({
         onOpenChange={setIsEditModalOpen}
         categories={categories}
         accounts={accounts}
+      />
+      <DeleteConfirmationDialog
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title={t("delete.title")}
+        description={t("delete.description")}
+        itemName={deletingTransaction?.description || ""}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );

@@ -28,6 +28,7 @@ interface Category {
 export function getColumns(
   t: ReturnType<typeof useTranslations<"categories">>,
   onEdit?: (category: Category) => void,
+  onDelete?: (category: Category) => void,
 ): ColumnDef<Category>[] {
   return [
     {
@@ -144,8 +145,7 @@ export function getColumns(
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement delete category functionality
-                    console.log("Delete category:", row.original.id);
+                    onDelete?.(row.original);
                   }}
                   variant="destructive"
                 >

@@ -28,6 +28,7 @@ export function getColumns(
   t: ReturnType<typeof useTranslations<"transactions">>,
   currency: string,
   onEdit?: (transaction: Transaction) => void,
+  onDelete?: (transaction: Transaction) => void,
 ): ColumnDef<Transaction>[] {
   return [
     {
@@ -216,8 +217,7 @@ export function getColumns(
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement delete transaction functionality
-                    console.log("Delete transaction:", row.original.id);
+                    onDelete?.(row.original);
                   }}
                   variant="destructive"
                 >

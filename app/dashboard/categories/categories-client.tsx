@@ -2,8 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import { toast } from "sonner";
 import { DataTable } from "@/components/shared/data-table/data-table";
 import { DataTableToolbar } from "@/components/shared/data-table/data-table-toolbar";
+import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog";
 import { DynamicIconWrapper } from "@/components/shared/dynamic-icon-wrapper";
 import {
   Card,
@@ -11,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { deleteCategory } from "./actions";
 import { getColumns } from "./columns";
 import { EditCategoryModal } from "./edit-category-modal";
 
@@ -34,6 +37,10 @@ export default function CategoriesClient({
     null,
   );
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [deletingCategory, setDeletingCategory] =
+    React.useState<Category | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const hasFilters = Boolean(searchValue);
 
@@ -58,7 +65,30 @@ export default function CategoriesClient({
     setIsEditModalOpen(true);
   };
 
-  const columns = getColumns(t, handleEdit);
+  const handleDelete = (category: Category) => {
+    setDeletingCategory(category);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingCategory) {
+      return;
+    }
+
+    setIsDeleting(true);
+    const result = await deleteCategory(deletingCategory.id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      toast.success(t("delete.success"));
+      setIsDeleteModalOpen(false);
+      setDeletingCategory(null);
+    } else {
+      toast.error(result.error || t("delete.error"));
+    }
+  };
+
+  const columns = getColumns(t, handleEdit, handleDelete);
 
   const toolbar = (
     <DataTableToolbar
@@ -102,6 +132,15 @@ export default function CategoriesClient({
         category={editingCategory}
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
+      />
+      <DeleteConfirmationDialog
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title={t("delete.title")}
+        description={t("delete.description")}
+        itemName={deletingCategory?.name || ""}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );

@@ -40,6 +40,7 @@ const accountTypeColors = {
 export function getColumns(
   t: ReturnType<typeof useTranslations<"accounts">>,
   onEdit?: (account: Account) => void,
+  onDelete?: (account: Account) => void,
 ): ColumnDef<Account>[] {
   return [
     {
@@ -168,8 +169,7 @@ export function getColumns(
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement delete account functionality
-                    console.log("Delete account:", row.original.id);
+                    onDelete?.(row.original);
                   }}
                   variant="destructive"
                 >

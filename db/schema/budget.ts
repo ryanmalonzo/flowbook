@@ -122,7 +122,7 @@ export const transactions = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     accountId: text("account_id")
       .notNull()
-      .references(() => financialAccounts.id, { onDelete: "cascade" }),
+      .references(() => financialAccounts.id),
     categoryId: text("category_id").references(() => categories.id, {
       onDelete: "set null",
     }),

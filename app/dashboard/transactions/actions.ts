@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/db";
@@ -97,6 +97,73 @@ export async function updateTransaction(
     return {
       success: false,
       error: "Failed to update transaction",
+    };
+  }
+}
+
+interface DeleteTransactionResult {
+  success: boolean;
+  error?: string;
+}
+
+export async function deleteTransaction(
+  transactionId: string,
+): Promise<DeleteTransactionResult> {
+  try {
+    const user = await getRequiredUser();
+    logger.debug({ userId: user.id, transactionId }, "Deleting transaction");
+
+    const existingTransaction = await db
+      .select()
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.id, transactionId),
+          eq(transactions.userId, user.id),
+          isNull(transactions.deletedAt),
+        ),
+      )
+      .limit(1);
+
+    if (existingTransaction.length === 0) {
+      logger.warn(
+        { userId: user.id, transactionId },
+        "Transaction not found or access denied",
+      );
+      return {
+        success: false,
+        error: "Transaction not found",
+      };
+    }
+
+    await db
+      .update(transactions)
+      .set({
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(transactions.id, transactionId),
+          eq(transactions.userId, user.id),
+        ),
+      );
+
+    logger.info(
+      { userId: user.id, transactionId },
+      "Transaction deleted successfully",
+    );
+
+    // Revalidate both transactions and accounts pages since balances are calculated from transactions
+    revalidatePath("/dashboard/transactions");
+    revalidatePath("/dashboard/accounts");
+
+    return { success: true };
+  } catch (error) {
+    logger.error({ error }, "Failed to delete transaction");
+    return {
+      success: false,
+      error: "Failed to delete transaction",
     };
   }
 }

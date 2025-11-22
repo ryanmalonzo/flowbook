@@ -14,8 +14,10 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
+import { toast } from "sonner";
 import { DataTable } from "@/components/shared/data-table/data-table";
 import { DataTableToolbar } from "@/components/shared/data-table/data-table-toolbar";
+import { DeleteConfirmationDialog } from "@/components/shared/delete-confirmation-dialog";
 import { EntityCard } from "@/components/shared/entity-card";
 import { MetricCard } from "@/components/shared/metric-card";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +37,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/utils";
+import { deleteAccount } from "./actions";
 import { getColumns } from "./columns";
 import { EditAccountModal } from "./edit-account-modal";
 
@@ -80,6 +83,11 @@ export default function AccountsClient({
     null,
   );
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [deletingAccount, setDeletingAccount] = React.useState<Account | null>(
+    null,
+  );
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   // Calculate assets (checking + savings) using converted balances
   const assets = accounts.reduce((sum, account) => {
@@ -113,7 +121,30 @@ export default function AccountsClient({
     setIsEditModalOpen(true);
   };
 
-  const columns = getColumns(t, handleEdit);
+  const handleDelete = (account: Account) => {
+    setDeletingAccount(account);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingAccount) {
+      return;
+    }
+
+    setIsDeleting(true);
+    const result = await deleteAccount(deletingAccount.id);
+    setIsDeleting(false);
+
+    if (result.success) {
+      toast.success(t("delete.success"));
+      setIsDeleteModalOpen(false);
+      setDeletingAccount(null);
+    } else {
+      toast.error(result.error || t("delete.error"));
+    }
+  };
+
+  const columns = getColumns(t, handleEdit, handleDelete);
 
   return (
     <div className="flex flex-col gap-6">
@@ -238,8 +269,7 @@ export default function AccountsClient({
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              // TODO: Implement delete account functionality
-                              console.log("Delete account:", account.id);
+                              handleDelete(account);
                             }}
                             variant="destructive"
                           >
@@ -275,6 +305,15 @@ export default function AccountsClient({
         account={editingAccount}
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
+      />
+      <DeleteConfirmationDialog
+        open={isDeleteModalOpen}
+        onOpenChange={setIsDeleteModalOpen}
+        title={t("delete.title")}
+        description={t("delete.description")}
+        itemName={deletingAccount?.name || ""}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
       />
     </div>
   );
