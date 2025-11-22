@@ -27,6 +27,7 @@ import type { Transaction } from "./types";
 export function getColumns(
   t: ReturnType<typeof useTranslations<"transactions">>,
   currency: string,
+  onEdit?: (transaction: Transaction) => void,
 ): ColumnDef<Transaction>[] {
   return [
     {
@@ -207,8 +208,7 @@ export function getColumns(
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement edit transaction functionality
-                    console.log("Edit transaction:", row.original.id);
+                    onEdit?.(row.original);
                   }}
                 >
                   <Pencil className="mr-2 h-4 w-4" />

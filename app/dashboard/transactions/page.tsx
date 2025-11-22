@@ -19,8 +19,8 @@ export default async function TransactionsPage() {
   return (
     <TransactionsClient
       transactions={transactions}
-      accounts={accounts.map((a) => ({ id: a.id, name: a.name }))}
-      categories={categories.map((c) => ({ id: c.id, name: c.name }))}
+      accounts={accounts}
+      categories={categories}
       currency={currency}
     />
   );

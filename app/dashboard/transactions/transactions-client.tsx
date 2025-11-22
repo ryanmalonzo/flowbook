@@ -16,12 +16,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getColumns } from "./columns";
+import { EditTransactionModal } from "./edit-transaction-modal";
 import type { Transaction } from "./types";
 
 interface TransactionsClientProps {
   transactions: Transaction[];
-  accounts: Array<{ id: string; name: string }>;
-  categories: Array<{ id: string; name: string }>;
+  accounts: Array<{
+    id: string;
+    name: string;
+    type: "checking" | "savings";
+    balance: string | null;
+    currency: string | null;
+  }>;
+  categories: Array<{
+    id: string;
+    name: string;
+    color: string | null;
+    icon: string | null;
+  }>;
   currency: string;
 }
 
@@ -56,6 +68,9 @@ export default function TransactionsClient({
   const [amountRange, setAmountRange] = React.useState<
     AmountRange | undefined
   >();
+  const [editingTransaction, setEditingTransaction] =
+    React.useState<Transaction | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   const hasFilters = Boolean(
     searchValue ||
@@ -194,7 +209,12 @@ export default function TransactionsClient({
     return options;
   }, [transactions]);
 
-  const columns = getColumns(t, currency);
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setIsEditModalOpen(true);
+  };
+
+  const columns = getColumns(t, currency, handleEdit);
 
   const toolbar = (
     <DataTableToolbar
@@ -261,6 +281,13 @@ export default function TransactionsClient({
           translationNamespace="transactions"
         />
       )}
+      <EditTransactionModal
+        transaction={editingTransaction}
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        categories={categories}
+        accounts={accounts}
+      />
     </div>
   );
 }

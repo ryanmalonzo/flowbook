@@ -238,6 +238,40 @@
     },
     "table": {
       "noResults": "No results."
+    },
+    "edit": {
+      "title": "Edit Transaction",
+      "modalDescription": "Update transaction details",
+      "date": {
+        "label": "Date"
+      },
+      "transactionDescription": {
+        "label": "Description",
+        "placeholder": "Enter description"
+      },
+      "amount": {
+        "label": "Amount",
+        "placeholder": "0.00"
+      },
+      "type": {
+        "label": "Type"
+      },
+      "category": {
+        "label": "Category",
+        "placeholder": "Select category"
+      },
+      "account": {
+        "label": "Account",
+        "placeholder": "Select account"
+      },
+      "vendor": {
+        "label": "Vendor (optional)",
+        "placeholder": "Enter vendor name"
+      },
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "success": "Transaction updated successfully",
+      "error": "Failed to update transaction"
     }
   },
   "betterAuth": {
