@@ -139,6 +139,24 @@
     },
     "table": {
       "noResults": "No results."
+    },
+    "edit": {
+      "title": "Edit Category",
+      "description": "Update category details",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter category name"
+      },
+      "icon": {
+        "label": "Icon"
+      },
+      "color": {
+        "label": "Color"
+      },
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "success": "Category updated successfully",
+      "error": "Failed to update category"
     }
   },
   "transactions": {

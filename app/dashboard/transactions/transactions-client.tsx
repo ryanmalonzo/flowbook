@@ -186,7 +186,7 @@ export default function TransactionsClient({
         value: vendor,
       }));
 
-    const hasNoVendor = transactions.some((t) => !t.vendor);
+    const hasNoVendor = transactions.some((transaction) => !transaction.vendor);
     if (hasNoVendor) {
       options.push({ label: "No vendor", value: "no-vendor" });
     }

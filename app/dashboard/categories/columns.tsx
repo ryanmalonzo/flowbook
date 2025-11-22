@@ -27,6 +27,7 @@ interface Category {
 
 export function getColumns(
   t: ReturnType<typeof useTranslations<"categories">>,
+  onEdit?: (category: Category) => void,
 ): ColumnDef<Category>[] {
   return [
     {
@@ -135,8 +136,7 @@ export function getColumns(
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement edit category functionality
-                    console.log("Edit category:", row.original.id);
+                    onEdit?.(row.original);
                   }}
                 >
                   <Pencil className="mr-2 h-4 w-4" />

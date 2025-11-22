@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getColumns } from "./columns";
+import { EditCategoryModal } from "./edit-category-modal";
 
 interface Category {
   id: string;
@@ -29,6 +30,10 @@ export default function CategoriesClient({
 }: CategoriesClientProps) {
   const t = useTranslations("categories");
   const [searchValue, setSearchValue] = React.useState("");
+  const [editingCategory, setEditingCategory] = React.useState<Category | null>(
+    null,
+  );
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   const hasFilters = Boolean(searchValue);
 
@@ -48,7 +53,12 @@ export default function CategoriesClient({
     });
   }, [categories, searchValue]);
 
-  const columns = getColumns(t);
+  const handleEdit = (category: Category) => {
+    setEditingCategory(category);
+    setIsEditModalOpen(true);
+  };
+
+  const columns = getColumns(t, handleEdit);
 
   const toolbar = (
     <DataTableToolbar
@@ -88,6 +98,11 @@ export default function CategoriesClient({
           />
         </>
       )}
+      <EditCategoryModal
+        category={editingCategory}
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+      />
     </div>
   );
 }
