@@ -39,6 +39,7 @@ const accountTypeColors = {
 
 export function getColumns(
   t: ReturnType<typeof useTranslations<"accounts">>,
+  onEdit?: (account: Account) => void,
 ): ColumnDef<Account>[] {
   return [
     {
@@ -159,8 +160,7 @@ export function getColumns(
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    // TODO: Implement edit account functionality
-                    console.log("Edit account:", row.original.id);
+                    onEdit?.(row.original);
                   }}
                 >
                   <Pencil className="mr-2 h-4 w-4" />

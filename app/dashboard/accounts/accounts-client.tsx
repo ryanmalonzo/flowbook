@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { getColumns } from "./columns";
+import { EditAccountModal } from "./edit-account-modal";
 
 interface Account {
   id: string;
@@ -64,6 +65,10 @@ export default function AccountsClient({
   const t = useTranslations("accounts");
   const [viewMode, setViewMode] = React.useState<"cards" | "table">("cards");
   const [searchValue, setSearchValue] = React.useState("");
+  const [editingAccount, setEditingAccount] = React.useState<Account | null>(
+    null,
+  );
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   // Calculate assets (checking + savings) using converted balances
   const assets = accounts.reduce((sum, account) => {
@@ -92,7 +97,12 @@ export default function AccountsClient({
     });
   }, [accounts, searchValue]);
 
-  const columns = getColumns(t);
+  const handleEdit = (account: Account) => {
+    setEditingAccount(account);
+    setIsEditModalOpen(true);
+  };
+
+  const columns = getColumns(t, handleEdit);
 
   return (
     <div className="flex flex-col gap-6">
@@ -210,6 +220,11 @@ export default function AccountsClient({
           )}
         </div>
       )}
+      <EditAccountModal
+        account={editingAccount}
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+      />
     </div>
   );
 }

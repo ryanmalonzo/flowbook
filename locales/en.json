@@ -112,6 +112,24 @@
     "view": {
       "cards": "Cards view",
       "table": "Table view"
+    },
+    "edit": {
+      "title": "Edit Account",
+      "description": "Update account details",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter account name"
+      },
+      "type": {
+        "label": "Account Type"
+      },
+      "currency": {
+        "label": "Currency"
+      },
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "success": "Account updated successfully",
+      "error": "Failed to update account"
     }
   },
   "categories": {

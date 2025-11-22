@@ -36,6 +36,43 @@ export type CurrencyCode =
   | "ZAR";
 
 /**
+ * Array of all supported currency codes
+ */
+export const CURRENCY_CODES: readonly CurrencyCode[] = [
+  "AUD",
+  "BGN",
+  "BRL",
+  "CAD",
+  "CHF",
+  "CNY",
+  "CZK",
+  "DKK",
+  "EUR",
+  "GBP",
+  "HKD",
+  "HUF",
+  "IDR",
+  "ILS",
+  "INR",
+  "ISK",
+  "JPY",
+  "KRW",
+  "MXN",
+  "MYR",
+  "NOK",
+  "NZD",
+  "PHP",
+  "PLN",
+  "RON",
+  "SEK",
+  "SGD",
+  "THB",
+  "TRY",
+  "USD",
+  "ZAR",
+] as const;
+
+/**
  * Default currency code used throughout the application
  * Used as fallback when user currency is not set
  */
